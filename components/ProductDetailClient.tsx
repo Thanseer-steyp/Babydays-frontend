@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/components/context/CartContext";
 import { useWishlist } from "@/components/context/WishlistContext";
 import { useAuth } from "@/components/context/AuthContext";
 import { useRouter } from "next/navigation";
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const isVideo = (url) => /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url ?? "");
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 const ChevronLeft = () => (
@@ -35,7 +38,81 @@ const StarIcon = () => (
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
   </svg>
 );
+const PlayIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.45)" />
+    <polygon points="10 8 17 12 10 16" fill="white" />
+  </svg>
+);
+const MuteIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+    <line x1="23" y1="9" x2="17" y2="15" />
+    <line x1="17" y1="9" x2="23" y2="15" />
+  </svg>
+);
+const UnmuteIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+  </svg>
+);
 
+// ── Video Player with mute toggle ─────────────────────────────────────────────
+const VideoPlayer = ({ src, isMuted, onToggleMute }) => {
+  const videoRef = useRef(null);
+
+  // Sync muted state to the video element imperatively
+  // (React's muted prop doesn't react to changes after mount)
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
+
+  return (
+    <div className="absolute inset-0 w-full h-full">
+      <video
+        ref={videoRef}
+        src={src}
+        className="w-full h-full object-cover img-fade"
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
+      {/* Mute / Unmute button — bottom-right corner */}
+      <button
+        onClick={onToggleMute}
+        className="absolute bottom-3 right-3 z-20 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-all"
+        title={isMuted ? "Unmute video" : "Mute video"}
+      >
+        {isMuted ? <MuteIcon /> : <UnmuteIcon />}
+      </button>
+    </div>
+  );
+};
+
+// ── Thumbnail ─────────────────────────────────────────────────────────────────
+const Thumbnail = ({ src, alt, active, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`thumb flex-shrink-0 relative w-20 h-20 rounded-xl overflow-hidden border-2 ${
+      active ? "border-teal-400 opacity-100" : "border-gray-200 opacity-70"
+    }`}
+  >
+    {isVideo(src) ? (
+      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+        <PlayIcon />
+      </div>
+    ) : (
+      <Image src={src} alt={alt} fill className="object-cover" />
+    )}
+  </button>
+);
+
+// ── Main Component ────────────────────────────────────────────────────────────
 export default function ProductDetailClient({ product }) {
   const { addToCart } = useCart();
   const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
@@ -43,17 +120,20 @@ export default function ProductDetailClient({ product }) {
   const router = useRouter();
 
   const [activeImg, setActiveImg] = useState(0);
+  const [isMuted, setIsMuted] = useState(true); // videos start muted (browser autoplay policy)
+
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.find((v) => v.is_available) ?? product.variants?.[0] ?? null
   );
-
   const [selectedSize, setSelectedSize] = useState(
     selectedVariant?.sizes?.find((s) => s.is_available) ?? selectedVariant?.sizes?.[0] ?? null
   );
 
   useEffect(() => {
     if (selectedVariant) {
-      setSelectedSize(selectedVariant.sizes?.find((s) => s.is_available) ?? selectedVariant.sizes?.[0] ?? null);
+      setSelectedSize(
+        selectedVariant.sizes?.find((s) => s.is_available) ?? selectedVariant.sizes?.[0] ?? null
+      );
     }
   }, [selectedVariant]);
 
@@ -61,36 +141,36 @@ export default function ProductDetailClient({ product }) {
   const [cartMsg, setCartMsg] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
 
-  let images = product.media?.map((m) => m.media).filter(Boolean) ?? [];
-  if (images.length === 0 && product.main_media) images.push(product.main_media);
+  // ── Build media list (images + videos) ──────────────────────────────────────
+  let mediaList = product.media?.map((m) => m.media).filter(Boolean) ?? [];
+  if (mediaList.length === 0 && product.main_media) mediaList.push(product.main_media);
 
   if (selectedVariant?.media_gallery?.length > 0) {
-    images = selectedVariant.media_gallery.map((m) => m.media).filter(Boolean);
-    if (selectedVariant.image && !images.includes(selectedVariant.image)) {
-        images = [selectedVariant.image, ...images];
+    mediaList = selectedVariant.media_gallery.map((m) => m.media).filter(Boolean);
+    if (selectedVariant.image && !mediaList.includes(selectedVariant.image)) {
+      mediaList = [selectedVariant.image, ...mediaList];
     }
   } else {
     if (product.variants?.length > 0) {
       product.variants.forEach((v) => {
-        if (v.image && !images.includes(v.image)) {
-          images.push(v.image);
-        }
+        if (v.image && !mediaList.includes(v.image)) mediaList.push(v.image);
       });
     }
     if (selectedVariant?.image) {
       const vImg = selectedVariant.image;
-      images = images.filter((img) => img !== vImg);
-      images.unshift(vImg);
+      mediaList = mediaList.filter((m) => m !== vImg);
+      mediaList.unshift(vImg);
     }
   }
 
-  const price = selectedSize?.price ?? product.lowest_variant_price ?? product.price ?? 0;
-  const mrp = selectedSize?.mrp ?? product.lowest_variant_mrp ?? product.mrp ?? price;
-  const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : null;
+  // ── Pricing ──────────────────────────────────────────────────────────────────
+  const price       = selectedSize?.price ?? product.lowest_variant_price ?? product.price ?? 0;
+  const mrp         = selectedSize?.mrp   ?? product.lowest_variant_mrp   ?? product.mrp   ?? price;
+  const discount    = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : null;
   const isAvailable = product.is_available && (selectedSize ? selectedSize.is_available : true);
+  const wishlisted  = isWishlisted(product.id);
 
-  const wishlisted = isWishlisted(product.id);
-
+  // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleWishlist = async () => {
     if (!user) { router.push("/auth"); return; }
     if (wishlisted) await removeFromWishlist(product.slug);
@@ -99,14 +179,17 @@ export default function ProductDetailClient({ product }) {
 
   const handleAddToCart = async () => {
     if (!user) { router.push("/auth"); return; }
-    if (product.variants?.length > 0 && !selectedSize) { setCartMsg({ type: "error", text: "Please select a size" }); return; }
-    
+    if (product.variants?.length > 0 && !selectedSize) {
+      setCartMsg({ type: "error", text: "Please select a size" });
+      return;
+    }
     setAddingToCart(true);
-    const variantId = selectedSize ? selectedSize.id : null; 
+    const variantId = selectedSize ? selectedSize.id : null;
     const result = await addToCart(product.slug, variantId, qty);
-    setCartMsg(result.success
-      ? { type: "success", text: "Added to cart!" }
-      : { type: "error", text: "Failed to add to cart" }
+    setCartMsg(
+      result.success
+        ? { type: "success", text: "Added to cart!" }
+        : { type: "error",   text: "Failed to add to cart" }
     );
     setAddingToCart(false);
     setTimeout(() => setCartMsg(null), 3000);
@@ -114,7 +197,10 @@ export default function ProductDetailClient({ product }) {
 
   const handleBuyNow = async () => {
     if (!user) { router.push("/auth"); return; }
-    if (product.variants?.length > 0 && !selectedSize) { setCartMsg({ type: "error", text: "Please select a size" }); return; }
+    if (product.variants?.length > 0 && !selectedSize) {
+      setCartMsg({ type: "error", text: "Please select a size" });
+      return;
+    }
     const variantId = selectedSize ? selectedSize.id : null;
     await addToCart(product.slug, variantId, qty);
     router.push("/cart");
@@ -134,6 +220,9 @@ export default function ProductDetailClient({ product }) {
     ? product.features.split("\n").filter((f) => f.trim())
     : [];
 
+  const currentMedia = mediaList[activeImg];
+
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <>
       <style>{`
@@ -145,40 +234,81 @@ export default function ProductDetailClient({ product }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16" style={{ fontFamily: "'Nunito', sans-serif" }}>
 
+        {/* ── Left: Media ── */}
         <div className="flex flex-col gap-4">
-          <div className="relative bg-gray-50 rounded-2xl overflow-hidden border border-gray-100" style={{ aspectRatio: "1/1" }}>
-            {images.length > 0 ? (
-              <Image key={activeImg} src={images[activeImg]} alt={`${product.title} - ${activeImg + 1}`} fill className="object-cover img-fade" priority />
+
+          {/* Main viewer */}
+          <div
+            className="relative bg-gray-50 rounded-2xl overflow-hidden border border-gray-100"
+            style={{ aspectRatio: "1/1" }}
+          >
+            {mediaList.length > 0 ? (
+              isVideo(currentMedia) ? (
+                <VideoPlayer
+                  key={activeImg}
+                  src={currentMedia}
+                  isMuted={isMuted}
+                  onToggleMute={() => setIsMuted((m) => !m)}
+                />
+              ) : (
+                <Image
+                  key={activeImg}
+                  src={currentMedia}
+                  alt={`${product.title} - ${activeImg + 1}`}
+                  fill
+                  className="object-cover img-fade"
+                  priority
+                />
+              )
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-200">
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
               </div>
             )}
-            {images.length > 1 && (
+
+            {/* Prev / Next arrows */}
+            {mediaList.length > 1 && (
               <>
-                <button onClick={() => setActiveImg((i) => (i - 1 + images.length) % images.length)} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white hover:scale-110 transition-all">
+                <button
+                  onClick={() => setActiveImg((i) => (i - 1 + mediaList.length) % mediaList.length)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white hover:scale-110 transition-all"
+                >
                   <ChevronLeft />
                 </button>
-                <button onClick={() => setActiveImg((i) => (i + 1) % images.length)} className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white hover:scale-110 transition-all">
+                <button
+                  onClick={() => setActiveImg((i) => (i + 1) % mediaList.length)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white hover:scale-110 transition-all"
+                >
                   <ChevronRight />
                 </button>
               </>
             )}
           </div>
 
-          {images.length > 0 && (
+          {/* Thumbnail strip */}
+          {mediaList.length > 1 && (
             <div className="flex gap-3 overflow-x-auto pb-1">
-              {images.map((img, i) => (
-                <button key={i} onClick={() => setActiveImg(i)} className={`thumb flex-shrink-0 relative w-20 h-20 rounded-xl overflow-hidden border-2 ${i === activeImg ? "border-teal-400 opacity-100" : "border-gray-200 opacity-70"}`}>
-                  <Image src={img} alt={`Thumbnail ${i + 1}`} fill className="object-cover" />
-                </button>
+              {mediaList.map((src, i) => (
+                <Thumbnail
+                  key={i}
+                  src={src}
+                  alt={`Thumbnail ${i + 1}`}
+                  active={i === activeImg}
+                  onClick={() => setActiveImg(i)}
+                />
               ))}
             </div>
           )}
         </div>
 
+        {/* ── Right: Details ── */}
         <div className="flex flex-col gap-5">
-          {/* Top row */}
+
+          {/* Stock + share */}
           <div className="flex items-center justify-between">
             <span className={`text-xs font-bold px-4 py-1.5 rounded-full ${isAvailable ? "bg-green-100 text-green-700" : "bg-rose-100 text-rose-600"}`}>
               {isAvailable ? "✓ In Stock" : "Out of stock"}
@@ -188,6 +318,7 @@ export default function ProductDetailClient({ product }) {
             </button>
           </div>
 
+          {/* Title */}
           <h1 className="text-xl md:text-2xl font-black text-gray-900 leading-snug">{product.title}</h1>
 
           {/* Ratings */}
@@ -211,7 +342,11 @@ export default function ProductDetailClient({ product }) {
             {mrp > price && (
               <>
                 <span className="text-lg text-gray-400 line-through font-medium">₹{Number(mrp).toLocaleString("en-IN")}</span>
-                {discount && <span className="text-sm font-black text-orange-500 bg-orange-50 px-2 py-0.5 rounded">{discount}% off</span>}
+                {discount && (
+                  <span className="text-sm font-black text-orange-500 bg-orange-50 px-2 py-0.5 rounded">
+                    {discount}% off
+                  </span>
+                )}
               </>
             )}
           </div>
@@ -221,17 +356,17 @@ export default function ProductDetailClient({ product }) {
 
           <div className="w-full h-px bg-gray-100" />
 
+          {/* Variants (prints) */}
           {product.variants?.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-sm font-bold text-gray-700">Choose Print: <span className="font-normal text-gray-500">{selectedVariant?.color}</span></p>
+              <p className="text-sm font-bold text-gray-700">
+                Choose Print: <span className="font-normal text-gray-500">{selectedVariant?.color}</span>
+              </p>
               <div className="flex flex-wrap gap-3">
                 {product.variants.map((v) => (
                   <button
                     key={v.id}
-                    onClick={() => {
-                        setSelectedVariant(v); 
-                        setActiveImg(0);
-                    }}
+                    onClick={() => { setSelectedVariant(v); setActiveImg(0); }}
                     title={v.color}
                     className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedVariant?.id === v.id
@@ -240,11 +375,17 @@ export default function ProductDetailClient({ product }) {
                     }`}
                   >
                     {v.image ? (
-                        <Image src={v.image} alt={v.color} width={56} height={56} className="object-cover w-full h-full" />
+                      <Image
+                        src={v.image}
+                        alt={`${product.title} ${v.color || ""}`}
+                        width={56}
+                        height={56}
+                        className="object-cover w-full h-full"
+                      />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-400 bg-gray-50 uppercase leading-tight text-center break-words p-1">
-                          {v.color.slice(0, 8)}
-                        </div>
+                      <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-400 bg-gray-50 uppercase leading-tight text-center break-words p-1">
+                        {v.color.slice(0, 8)}
+                      </div>
                     )}
                   </button>
                 ))}
@@ -293,21 +434,15 @@ export default function ProductDetailClient({ product }) {
 
           {/* Cart message */}
           {cartMsg && (
-            <div className={`text-sm font-bold px-4 py-2 rounded-lg ${cartMsg.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+            <div className={`text-sm font-bold px-4 py-2 rounded-lg ${
+              cartMsg.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
+            }`}>
               {cartMsg.text}
             </div>
           )}
 
-          {/* Qty + Actions */}
+          {/* Actions */}
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Qty */}
-            {/* <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-              <button onClick={() => setQty((q) => Math.max(q - 1, 1))} className="w-10 h-11 flex items-center justify-center text-gray-500 hover:bg-gray-50 border-r border-gray-200 text-lg font-bold">−</button>
-              <span className="w-10 text-center text-sm font-bold text-gray-700">{qty}</span>
-              <button onClick={() => setQty((q) => Math.min(q + 1, 99))} className="w-10 h-11 flex items-center justify-center text-gray-500 hover:bg-gray-50 border-l border-gray-200 text-lg font-bold">+</button>
-            </div> */}
-
-            {/* Add to Cart */}
             <button
               onClick={handleAddToCart}
               disabled={!isAvailable || addingToCart}
@@ -316,7 +451,6 @@ export default function ProductDetailClient({ product }) {
               {addingToCart ? "Adding…" : "Add to Cart"}
             </button>
 
-            {/* Buy Now */}
             <button
               onClick={handleBuyNow}
               disabled={!isAvailable}
@@ -325,7 +459,6 @@ export default function ProductDetailClient({ product }) {
               Buy Now
             </button>
 
-            {/* Wishlist */}
             <button
               onClick={handleWishlist}
               className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-xl text-gray-400 hover:border-rose-300 hover:text-rose-400 transition-all"
@@ -342,7 +475,7 @@ export default function ProductDetailClient({ product }) {
             </div>
           )}
 
-          {/* Category link */}
+          {/* Category */}
           <p className="text-sm text-gray-500">
             Category:{" "}
             <Link href={`/category/${product.product_category}`} className="text-teal-600 font-bold hover:underline">
@@ -354,297 +487,3 @@ export default function ProductDetailClient({ product }) {
     </>
   );
 }
-
-
-
-
-
-
-
-
-// // PATH: components/ProductDetailClient.jsx
-// "use client";
-
-// import { useState } from "react";
-// import Image from "next/image";
-// import Link from "next/link";
-
-// // ── Icons ──────────────────────────────────────────────────────────────────
-// const ChevronUp = () => (
-//   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-//     <polyline points="18 15 12 9 6 15" />
-//   </svg>
-// );
-// const ChevronDown = () => (
-//   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-//     <polyline points="6 9 12 15 18 9" />
-//   </svg>
-// );
-// const ChevronLeft = () => (
-//   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-//     <polyline points="15 18 9 12 15 6" />
-//   </svg>
-// );
-// const ChevronRight = () => (
-//   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-//     <polyline points="9 18 15 12 9 6" />
-//   </svg>
-// );
-// const HeartIcon = ({ filled }) => (
-//   <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? "#e11d48" : "none"} stroke={filled ? "#e11d48" : "currentColor"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-//     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-//   </svg>
-// );
-// const ShareIcon = () => (
-//   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-//     <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
-//     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-//   </svg>
-// );
-
-// export default function ProductDetailClient({ product, productCategories }) {
-//   const [activeImg, setActiveImg] = useState(0);
-//   const [qty, setQty] = useState(1);
-//   const [wishlisted, setWishlisted] = useState(false);
-
-//   const displayPrice = product.salePrice ?? product.price;
-
-//   const prevImg = () =>
-//     setActiveImg((i) => (i - 1 + product.images.length) % product.images.length);
-//   const nextImg = () =>
-//     setActiveImg((i) => (i + 1) % product.images.length);
-
-//   return (
-//     <>
-//       <style>{`
-//         .thumb-active { border-color: #14b8a6; }
-//         .thumb { transition: border-color 0.15s, opacity 0.15s; }
-//         .thumb:hover { border-color: #14b8a6; opacity: 1; }
-
-//         @keyframes fadeIn {
-//           from { opacity: 0; transform: scale(0.98); }
-//           to   { opacity: 1; transform: scale(1); }
-//         }
-//         .img-fade { animation: fadeIn 0.25s ease forwards; }
-
-//         .qty-btn { transition: background 0.15s; }
-//         .qty-btn:hover { background: #f0fafa; }
-
-//         .add-cart-btn { transition: background 0.2s, transform 0.15s; }
-//         .add-cart-btn:hover:not(:disabled) { background: #6b7280; transform: translateY(-1px); }
-//         .add-cart-btn:disabled { background: #d1d5db; cursor: not-allowed; }
-
-//         .buy-now-btn { transition: background 0.2s, transform 0.15s; }
-//         .buy-now-btn:hover:not(:disabled) { background: #d97706; transform: translateY(-1px); }
-//         .buy-now-btn:disabled { background: #d1d5db; cursor: not-allowed; }
-//       `}</style>
-
-//       {/* ── Main grid ── */}
-//       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-
-//         {/* LEFT: Image gallery */}
-//         <div className="flex flex-col gap-4">
-//           {/* Main image */}
-//           <div
-//             className="relative bg-gray-50 rounded-2xl overflow-hidden border border-gray-100"
-//             style={{ aspectRatio: "1/1" }}
-//           >
-//             <Image
-//               key={activeImg}
-//               src={product.images[activeImg]}
-//               alt={`${product.name} - image ${activeImg + 1}`}
-//               fill
-//               className="object-cover img-fade"
-//               priority
-//             />
-
-//             {/* Nav arrows */}
-//             {product.images.length > 1 && (
-//               <>
-//                 <button
-//                   onClick={prevImg}
-//                   aria-label="Previous image"
-//                   className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-gray-600 shadow hover:bg-white hover:scale-110 transition-all"
-//                 >
-//                   <ChevronLeft />
-//                 </button>
-//                 <button
-//                   onClick={nextImg}
-//                   aria-label="Next image"
-//                   className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-gray-600 shadow hover:bg-white hover:scale-110 transition-all"
-//                 >
-//                   <ChevronRight />
-//                 </button>
-//               </>
-//             )}
-//           </div>
-
-//           {/* Thumbnails */}
-//           {product.images.length > 1 && (
-//             <div className="flex gap-3 overflow-x-auto pb-1" role="list" aria-label="Product images">
-//               {product.images.map((img, i) => (
-//                 <button
-//                   key={i}
-//                   onClick={() => setActiveImg(i)}
-//                   aria-label={`View image ${i + 1}`}
-//                   aria-pressed={i === activeImg}
-//                   className={`thumb flex-shrink-0 relative w-20 h-20 rounded-xl overflow-hidden border-2 ${
-//                     i === activeImg ? "thumb-active opacity-100" : "border-gray-200 opacity-70"
-//                   }`}
-//                 >
-//                   <Image src={img} alt={`${product.name} thumbnail ${i + 1}`} fill className="object-cover" />
-//                 </button>
-//               ))}
-//             </div>
-//           )}
-//         </div>
-
-//         {/* RIGHT: Product info */}
-//         <div className="flex flex-col gap-5">
-
-//           {/* Stock badge + share */}
-//           <div className="flex items-center justify-between">
-//             <span
-//               className={`text-xs font-bold px-4 py-1.5 rounded-full ${
-//                 product.inStock
-//                   ? "bg-green-100 text-green-700"
-//                   : "bg-rose-100 text-rose-600"
-//               }`}
-//             >
-//               {product.inStock ? "✓ In Stock" : "Out of stock"}
-//             </span>
-//             <button
-//               aria-label="Share this product"
-//               className="text-teal-500 hover:text-teal-700 transition-colors p-1"
-//             >
-//               <ShareIcon />
-//             </button>
-//           </div>
-
-//           {/* Product name — h1 for SEO */}
-//           <h1 className="text-xl md:text-2xl font-black text-gray-900 leading-snug">
-//             {product.name}
-//           </h1>
-
-//           {/* Price */}
-//           <div className="flex items-baseline gap-3 flex-wrap">
-//             <span className="text-3xl font-black text-gray-900">
-//               ₹{displayPrice.toLocaleString("en-IN")}
-//             </span>
-//             {product.salePrice && (
-//               <>
-//                 <span className="text-lg text-gray-400 line-through font-medium">
-//                   ₹{product.price.toLocaleString("en-IN")}
-//                 </span>
-//                 <span className="text-sm font-black text-orange-500 bg-orange-50 px-2 py-0.5 rounded">
-//                   {product.discount}% off
-//                 </span>
-//               </>
-//             )}
-//           </div>
-
-//           {/* Divider */}
-//           <div className="w-full h-px bg-gray-100" />
-
-//           {/* Features */}
-//           <ul className="flex flex-col gap-2" aria-label="Product features">
-//             {product.features.map((f, i) => (
-//               <li key={i} className="text-sm text-gray-600 leading-relaxed">
-//                 {f}
-//               </li>
-//             ))}
-//           </ul>
-
-//           {/* Divider */}
-//           <div className="w-full h-px bg-gray-100" />
-
-//           {/* Quantity + Actions */}
-//           <div className="flex items-center gap-3 flex-wrap">
-//             {/* Qty stepper */}
-//             <div
-//               className="flex items-center border border-gray-200 rounded-lg overflow-hidden"
-//               role="group"
-//               aria-label="Quantity selector"
-//             >
-//               <div className="flex flex-col border-r border-gray-200">
-//                 <button
-//                   onClick={() => setQty((q) => Math.min(q + 1, 99))}
-//                   aria-label="Increase quantity"
-//                   className="qty-btn w-8 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-50"
-//                 >
-//                   <ChevronUp />
-//                 </button>
-//                 <button
-//                   onClick={() => setQty((q) => Math.max(q - 1, 1))}
-//                   aria-label="Decrease quantity"
-//                   className="qty-btn w-8 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-50"
-//                 >
-//                   <ChevronDown />
-//                 </button>
-//               </div>
-//               <span
-//                 className="w-10 text-center text-sm font-bold text-gray-700"
-//                 aria-live="polite"
-//                 aria-label={`Quantity: ${qty}`}
-//               >
-//                 {qty}
-//               </span>
-//             </div>
-
-//             {/* Add to Cart */}
-//             <button
-//               disabled={!product.inStock}
-//               aria-label={product.inStock ? `Add ${product.name} to cart` : "Out of stock"}
-//               className="add-cart-btn flex-1 min-w-[120px] bg-gray-500 text-white text-sm font-black py-3 px-6 rounded-xl disabled:bg-gray-200 disabled:text-gray-400"
-//             >
-//               Add to Cart
-//             </button>
-
-//             {/* Buy Now */}
-//             <button
-//               disabled={!product.inStock}
-//               aria-label={product.inStock ? `Buy ${product.name} now` : "Out of stock"}
-//               className="buy-now-btn flex-1 min-w-[120px] bg-amber-400 text-white text-sm font-black py-3 px-6 rounded-xl disabled:bg-gray-200 disabled:text-gray-400"
-//             >
-//               BUY NOW
-//             </button>
-
-//             {/* Wishlist */}
-//             <button
-//               onClick={() => setWishlisted((w) => !w)}
-//               aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-//               aria-pressed={wishlisted}
-//               className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-xl text-gray-400 hover:border-rose-300 hover:text-rose-400 transition-all"
-//             >
-//               <HeartIcon filled={wishlisted} />
-//             </button>
-//           </div>
-
-//           {/* Return policy */}
-//           <p className="text-sm text-gray-500">
-//             Easy 7 days{" "}
-//             <Link href="/returns" className="text-teal-600 font-bold hover:underline">
-//               return and exchanges
-//             </Link>
-//             {" available!"}
-//           </p>
-
-//           {/* Categories */}
-//           <div className="flex flex-col gap-1.5 pt-1">
-//             {productCategories.map((cat) => (
-//               <p key={cat.id} className="text-sm text-gray-500">
-//                 Category:{" "}
-//                 <Link
-//                   href={`/category/${cat.slug}`}
-//                   className="text-teal-600 font-bold hover:underline"
-//                 >
-//                   {cat.name}
-//                 </Link>
-//               </p>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }

@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import SplashScreen from "@/components/SplashScreen";
 import Wrapper from "@/components/includes/HeaderFooterWrapper";
 import { CartProvider } from "@/components/context/CartContext";
 import { WishlistProvider } from "@/components/context/WishlistContext";
@@ -28,7 +29,9 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <Wrapper>{children}</Wrapper>
+              <SplashScreen>
+                <Wrapper>{children}</Wrapper>
+              </SplashScreen>
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>
