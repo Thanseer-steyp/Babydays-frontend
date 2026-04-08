@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Logo from "../public/icons/logo.png";
 
 export default function SplashScreen({ children }) {
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,7 @@ export default function SplashScreen({ children }) {
         {/* Logo with Shine Effect */}
         <div className="relative w-28 h-28 overflow-hidden">
           <Image
-            src="/icons/logo.png"
+            src={Logo}
             alt="logo"
             fill
             className="object-contain"
@@ -47,7 +48,7 @@ export default function SplashScreen({ children }) {
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-8 w-56 h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="w-56 h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
             className="h-full bg-teal-500 transition-all duration-300"
             style={{ width: `${progress}%` }}
