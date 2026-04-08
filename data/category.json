@@ -1,0 +1,72 @@
+[
+  {
+    "id": "first-pillow",
+    "slug": "first-pillow",
+    "name": "First Pillow",
+    "tagline": "Baby Steady Head Pillows for perfect posture",
+    "bannerImage": "/images/categories/ctgryimg.png",
+    "bannerBg": "from-pink-100 via-rose-50 to-white",
+    "accentColor": "#e91e8c",
+    "icon": "/images/categories/ctgry1.png"
+  },
+  {
+    "id": "mums-hug",
+    "slug": "mums-hug",
+    "name": "Mum's Hug",
+    "tagline": "3-layer swaddle wraps for warmth & love",
+    "bannerImage": "/images/categories/ctgryimg.png",
+    "bannerBg": "from-orange-100 via-amber-50 to-white",
+    "accentColor": "#f97316",
+    "icon": "/images/categories/ctgry2.png"
+  },
+  {
+    "id": "sherpa-baby-sleeper",
+    "slug": "sherpa-baby-sleeper",
+    "name": "Sherpa Baby Sleeper",
+    "tagline": "Ultra-soft Sherpa fleece for cozy sleep",
+    "bannerImage": "/images/categories/ctgryimg.png",
+    "bannerBg": "from-purple-100 via-violet-50 to-white",
+    "accentColor": "#7c3aed",
+    "icon": "/images/categories/ctgry3.png"
+  },
+  {
+    "id": "love-wrap",
+    "slug": "love-wrap",
+    "name": "Love Wrap",
+    "tagline": "Gentle wraps to keep your baby snug",
+    "bannerImage": "/images/categories/ctgryimg.png",
+    "bannerBg": "from-teal-100 via-cyan-50 to-white",
+    "accentColor": "#0d9488",
+    "icon": "/images/categories/ctgry4.png"
+  },
+  {
+    "id": "ponky-head-coral",
+    "slug": "ponky-head-coral",
+    "name": "Ponky Head Coral",
+    "tagline": "Coral collection – head support pillows",
+    "bannerImage": "/images/categories/ctgryimg.png",
+    "bannerBg": "from-green-100 via-emerald-50 to-white",
+    "accentColor": "#16a34a",
+    "icon": "/images/categories/ctgry5.png"
+  },
+  {
+    "id": "queen-coral",
+    "slug": "queen-coral",
+    "name": "Queen Coral",
+    "tagline": "Premium queen-size baby blankets",
+    "bannerImage": "/images/categories/ctgryimg.png",
+    "bannerBg": "from-rose-100 via-pink-50 to-white",
+    "accentColor": "#be185d",
+    "icon": "/images/categories/ctgry6.png"
+  },
+  {
+    "id": "wrap-with-flower",
+    "slug": "wrap-with-flower",
+    "name": "Wrap with Flower",
+    "tagline": "Floral-patterned baby wraps & blankets",
+    "bannerImage": "/images/categories/ctgryimg.png",
+    "bannerBg": "from-yellow-100 via-lime-50 to-white",
+    "accentColor": "#ca8a04",
+    "icon": "/images/categories/ctgry7.png"
+  }
+]

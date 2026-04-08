@@ -1,0 +1,58 @@
+{
+  "banners": [
+    {
+      "id": 1,
+      "image": "/images/babybanner.png",
+      "textPosition": "left",
+      "showContent": true,
+      "badge": "New Arrival",
+      "headline": "make their",
+      "headlineBold": "babydays",
+      "headlineSuffix": "magical!",
+      "couponLabel": "Apply coupon",
+      "couponCode": "FIRST20",
+      "couponSuffix": "to get",
+      "discountText": "20% OFF",
+      "discountSuffix": "on your first purchase!",
+      "cta": "Shop Now",
+      "ctaLink": "/products",
+      "bgGradient": "from-sky-300 via-sky-400 to-blue-500"
+    },
+    {
+      "id": 2,
+      "image": "/images/deliverybanner1.png",
+      "textPosition": "right",
+      "showContent": true,
+      "badge": "Hot Deals",
+      "headline": "the best gifts",
+      "headlineBold": "for little",
+      "headlineSuffix": "ones!",
+      "couponLabel": "Use code",
+      "couponCode": "BABY30",
+      "couponSuffix": "and save",
+      "discountText": "30% OFF",
+      "discountSuffix": "on selected items!",
+      "cta": "Explore Deals",
+      "ctaLink": "/deals",
+      "bgGradient": "from-purple-300 via-pink-300 to-rose-400"
+    },
+    {
+      "id": 3,
+      "image": "/images/babybanner1.png",
+      "textPosition": "left",
+      "showContent": true,
+      "badge": "Free Shipping",
+      "headline": "comfort &",
+      "headlineBold": "care for",
+      "headlineSuffix": "your baby!",
+      "couponLabel": "Free delivery on",
+      "couponCode": "₹499+",
+      "couponSuffix": "orders — no code needed",
+      "discountText": "FREE",
+      "discountSuffix": "shipping on all orders above ₹499!",
+      "cta": "Browse All",
+      "ctaLink": "/products",
+      "bgGradient": "from-emerald-300 via-teal-400 to-cyan-500"
+    }
+  ]
+}

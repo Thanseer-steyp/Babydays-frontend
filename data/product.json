@@ -1,0 +1,636 @@
+[
+  {
+    "id": "fp-001",
+    "slug": "first-pillow-virgin-r1-red",
+    "name": "FIRST PILLOW Virgin R1 fiber foam filled Baby Steady Head Pillow | red",
+    "categoryId": "first-pillow",
+    "images": [
+      "/images/products/product1.png",
+      "/images/products/product1.png",
+      "/images/products/product1.png"
+    ],
+    "price": 700,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "🌧️ Designed with Hollow Conjugate Virgin R1 fiber foam to provide utmost comfort and safety to the baby",
+      "👶 Unique shape prevents flat head syndrome and relieves pressure on the baby's head",
+      "🧒 Helps to develop the correct posture",
+      "↔️ size: 24cm*3cm (Circle Dia : 7cm)",
+      "🪢 Facilitates the alignment of baby's neck and spine",
+      "🌿 Made from lightweight Polar fleece cotton",
+      "🙌 Durable & Washable"
+    ],
+    "categories": ["first-pillow"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "fp-002",
+    "slug": "first-pillow-virgin-r1-603",
+    "name": "FIRST PILLOW Virgin R1 fiber foam filled Baby Steady Head Pillow | 603",
+    "categoryId": "first-pillow",
+    "images": [
+      "/images/products/product1.png",
+      "/images/products/product1.png",
+      "/images/products/product1.png",
+      "/images/products/product1.png",
+      "/images/products/product1.png"
+    ],
+    "price": 700,
+    "salePrice": 579,
+    "discount": 17,
+    "inStock": false,
+    "features": [
+      "🌧️ Designed with Hollow Conjugate Virgin R1 fiber foam to provide utmost comfort and safety to the baby",
+      "👶 Unique shape prevents flat head syndrome and relieves pressure on the baby's head",
+      "🧒 Helps to develop the correct posture",
+      "↔️ size: 24cm*3cm (Circle Dia : 7cm)",
+      "🪢 Facilitates the alignment of baby's neck and spine",
+      "🌿 Made from lightweight Polar fleece cotton",
+      "🙌 Durable & Washable"
+    ],
+    "categories": ["first-pillow", "daily-essentials"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "fp-003",
+    "slug": "first-pillow-blue-wave",
+    "name": "FIRST PILLOW Hollow Conjugate Baby Head Pillow | Blue Wave",
+    "categoryId": "first-pillow",
+    "images": ["/images/products/product1.png"],
+    "price": 700,
+    "salePrice": 599,
+    "discount": 14,
+    "inStock": true,
+    "features": [
+      "🌧️ Hollow Conjugate fiber filling for breathable comfort",
+      "👶 Ergonomic concave design for head support",
+      "🧒 Prevents flat head syndrome",
+      "🌿 Soft fleece outer cover",
+      "🙌 Machine washable"
+    ],
+    "categories": ["first-pillow"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "fp-004",
+    "slug": "first-pillow-pink-blush",
+    "name": "FIRST PILLOW Steady Head Support Pillow | Pink Blush",
+    "categoryId": "first-pillow",
+    "images": ["/images/products/product1.png"],
+    "price": 750,
+    "salePrice": 620,
+    "discount": 17,
+    "inStock": true,
+    "features": [
+      "🌧️ Virgin R1 foam filling",
+      "👶 Circle indent prevents flat head",
+      "🌿 Polar fleece cover",
+      "🙌 Easy to wash and dry"
+    ],
+    "categories": ["first-pillow"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-001",
+    "slug": "mums-hug-3-layer-white",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | White",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png", "/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": 999,
+    "discount": 23,
+    "inStock": true,
+    "features": [
+      "🤗 3 unique layers for warmth, comfort and safety",
+      "🌿 100% organic cotton inner layer",
+      "🧸 Soft fleece middle layer for insulation",
+      "🛡️ Waterproof outer shell",
+      "👶 Designed for newborns 0-6 months",
+      "🙌 Zip-free easy access for diaper changes"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-002",
+    "slug": "mums-hug-3-layer-pink",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Pink",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": 999,
+    "discount": 23,
+    "inStock": true,
+    "features": [
+      "🤗 Triple layer protection",
+      "🌿 Organic cotton lining",
+      "🧸 Cozy fleece middle layer",
+      "👶 Fits newborns 0-6 months",
+      "🙌 Easy snap closure"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-003",
+    "slug": "mums-hug-3-layer-blue",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Blue",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "🤗 3-layer warmth system",
+      "🌿 Breathable cotton",
+      "👶 Safe for sensitive skin",
+      "🙌 Washable & durable"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-004",
+    "slug": "mums-hug-3-layer-yellow",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Yellow",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": 999,
+    "discount": 23,
+    "inStock": true,
+    "features": [
+      "🤗 3 unique layers for warmth, comfort and safety",
+      "🌿 100% organic cotton inner layer",
+      "🧸 Soft fleece middle layer for insulation",
+      "🛡️ Waterproof outer shell",
+      "👶 Designed for newborns 0-6 months",
+      "🙌 Zip-free easy access for diaper changes"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-005",
+    "slug": "mums-hug-3-layer-mint",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Mint",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": 1099,
+    "discount": 15,
+    "inStock": true,
+    "features": [
+      "🤗 Triple layer protection",
+      "🌿 Organic cotton lining",
+      "🧸 Cozy fleece middle layer",
+      "👶 Fits newborns 0-6 months",
+      "🙌 Easy snap closure"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-006",
+    "slug": "mums-hug-3-layer-lavender",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Lavender",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1399,
+    "salePrice": 1149,
+    "discount": 18,
+    "inStock": true,
+    "features": [
+      "🤗 3-layer warmth system",
+      "🌿 Breathable organic cotton",
+      "🧸 Premium fleece middle layer",
+      "👶 Safe for sensitive skin",
+      "🙌 Washable & durable"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-007",
+    "slug": "mums-hug-3-layer-grey",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Grey",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "🤗 Triple layer warmth",
+      "🌿 100% breathable cotton",
+      "🛡️ Waterproof outer shell",
+      "👶 Newborn to 6 months",
+      "🙌 Easy care wash"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-008",
+    "slug": "mums-hug-3-layer-peach",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Peach",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": 999,
+    "discount": 23,
+    "inStock": true,
+    "features": [
+      "🤗 3 unique layers for warmth and safety",
+      "🌿 Organic cotton inner layer",
+      "🧸 Soft fleece insulation layer",
+      "🛡️ Waterproof outer shell",
+      "👶 Perfect for newborns",
+      "🙌 Zip-free diaper access"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-009",
+    "slug": "mums-hug-3-layer-coral",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Coral",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1399,
+    "salePrice": 1199,
+    "discount": 14,
+    "inStock": true,
+    "features": [
+      "🤗 Premium 3-layer construction",
+      "🌿 OEKO-TEX certified cotton",
+      "🧸 Sherpa fleece middle layer",
+      "🛡️ Water-resistant outer",
+      "👶 0-6 months size",
+      "🙌 Machine washable"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-010",
+    "slug": "mums-hug-3-layer-cream",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Cream",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "🤗 3-layer warmth and comfort",
+      "🌿 Breathable cotton lining",
+      "🧸 Cozy middle fleece layer",
+      "👶 Gentle on newborn skin",
+      "🙌 Easy to clean"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-011",
+    "slug": "mums-hug-3-layer-olive",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Olive",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1499,
+    "salePrice": 1249,
+    "discount": 17,
+    "inStock": true,
+    "features": [
+      "🤗 Triple layer protection system",
+      "🌿 100% organic cotton inner",
+      "🧸 Thermal fleece middle layer",
+      "🛡️ Waterproof & windproof outer",
+      "👶 Fits newborns 0-6 months",
+      "🙌 Zip-free snap buttons"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-012",
+    "slug": "mums-hug-3-layer-navy",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Navy",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1299,
+    "salePrice": 999,
+    "discount": 23,
+    "inStock": true,
+    "features": [
+      "🤗 3 unique comfort layers",
+      "🌿 Soft organic cotton lining",
+      "🧸 Plush fleece insulation",
+      "🛡️ Durable outer shell",
+      "👶 Newborn to 6 months",
+      "🙌 Washable & long-lasting"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "mh-013",
+    "slug": "mums-hug-3-layer-red",
+    "name": "Mum's Hug 3-Layer Swaddle Wrap | Red",
+    "categoryId": "mums-hug",
+    "images": ["/images/products/product1.png"],
+    "price": 1399,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "🤗 3-layer warmth system",
+      "🌿 Breathable cotton inner layer",
+      "🧸 Soft fleece middle layer",
+      "🛡️ Waterproof outer",
+      "👶 Safe for newborns",
+      "🙌 Machine washable"
+    ],
+    "categories": ["mums-hug"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "sb-001",
+    "slug": "sherpa-baby-sleeper-grey",
+    "name": "Sherpa Baby Sleeper | Grey",
+    "categoryId": "sherpa-baby-sleeper",
+    "images": ["/images/products/product1.png", "/images/products/product1.png"],
+    "price": 1599,
+    "salePrice": 1299,
+    "discount": 19,
+    "inStock": true,
+    "features": [
+      "🐑 Premium Sherpa fleece for ultra-soft touch",
+      "👶 Ergonomic sleeping pod design",
+      "🌡️ Temperature regulating fabric",
+      "🛡️ Anti-roll side cushions",
+      "🙌 Removable & washable cover",
+      "📐 Size: 70cm x 40cm"
+    ],
+    "categories": ["sherpa-baby-sleeper"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "sb-002",
+    "slug": "sherpa-baby-sleeper-cream",
+    "name": "Sherpa Baby Sleeper | Cream",
+    "categoryId": "sherpa-baby-sleeper",
+    "images": ["/images/products/product1.png"],
+    "price": 1599,
+    "salePrice": 1299,
+    "discount": 19,
+    "inStock": true,
+    "features": [
+      "🐑 Sherpa fleece exterior",
+      "👶 Breathable mesh base",
+      "🛡️ Raised edges for safety",
+      "🙌 Easy to clean"
+    ],
+    "categories": ["sherpa-baby-sleeper"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "sb-003",
+    "slug": "sherpa-baby-sleeper-brown",
+    "name": "Sherpa Baby Sleeper | Brown",
+    "categoryId": "sherpa-baby-sleeper",
+    "images": ["/images/products/product1.png"],
+    "price": 1699,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "🐑 Extra-thick Sherpa lining",
+      "👶 Ideal for newborns",
+      "🌿 Hypoallergenic materials",
+      "🙌 Machine washable"
+    ],
+    "categories": ["sherpa-baby-sleeper"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "lw-001",
+    "slug": "love-wrap-mint-green",
+    "name": "Love Wrap Baby Swaddle | Mint Green",
+    "categoryId": "love-wrap",
+    "images": ["/images/products/product1.png", "/images/products/product1.png"],
+    "price": 899,
+    "salePrice": 749,
+    "discount": 17,
+    "inStock": true,
+    "features": [
+      "💚 Soft stretchy fabric for snug swaddling",
+      "👶 Promotes longer sleep cycles",
+      "🌿 100% breathable cotton",
+      "🔒 Secure velcro fastening",
+      "📐 Fits babies 0-3 months",
+      "🙌 Easy to put on and remove"
+    ],
+    "categories": ["love-wrap"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "lw-002",
+    "slug": "love-wrap-coral",
+    "name": "Love Wrap Baby Swaddle | Coral",
+    "categoryId": "love-wrap",
+    "images": ["/images/products/product1.png"],
+    "price": 899,
+    "salePrice": 749,
+    "discount": 17,
+    "inStock": true,
+    "features": [
+      "💚 Gentle stretch for comfortable fit",
+      "👶 Reduces startle reflex",
+      "🌿 OEKO-TEX certified cotton",
+      "🙌 Washable & quick dry"
+    ],
+    "categories": ["love-wrap"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "lw-003",
+    "slug": "love-wrap-sky-blue",
+    "name": "Love Wrap Baby Swaddle | Sky Blue",
+    "categoryId": "love-wrap",
+    "images": ["/images/products/product1.png"],
+    "price": 899,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "💚 Breathable muslin cotton",
+      "👶 One-size-fits-most design",
+      "🙌 Easy swaddle for new parents"
+    ],
+    "categories": ["love-wrap"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "ph-001",
+    "slug": "ponky-head-coral-standard",
+    "name": "Ponky Head Coral Baby Head Support Pillow | Standard",
+    "categoryId": "ponky-head-coral",
+    "images": ["/images/products/product1.png", "/images/products/product1.png"],
+    "price": 649,
+    "salePrice": 549,
+    "discount": 15,
+    "inStock": true,
+    "features": [
+      "🌸 Coral-colored soft microfiber shell",
+      "👶 Ergonomic U-shape head cradle",
+      "🛡️ Anti-flat-head design",
+      "🌡️ Breathable mesh inner lining",
+      "📐 Size: 20cm x 18cm",
+      "🙌 Removable zippered cover"
+    ],
+    "categories": ["ponky-head-coral"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "ph-002",
+    "slug": "ponky-head-coral-mini",
+    "name": "Ponky Head Coral Baby Head Support Pillow | Mini",
+    "categoryId": "ponky-head-coral",
+    "images": ["/images/products/product1.png"],
+    "price": 549,
+    "salePrice": 479,
+    "discount": 13,
+    "inStock": true,
+    "features": [
+      "🌸 Mini size for premature babies",
+      "👶 Ultra-gentle on delicate skin",
+      "🙌 Washable cover",
+      "🌿 Hypoallergenic fill"
+    ],
+    "categories": ["ponky-head-coral"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "qc-001",
+    "slug": "queen-coral-baby-blanket-large",
+    "name": "Queen Coral Premium Baby Blanket | Large",
+    "categoryId": "queen-coral",
+    "images": ["/images/products/product1.png", "/images/products/product1.png"],
+    "price": 1499,
+    "salePrice": 1199,
+    "discount": 20,
+    "inStock": true,
+    "features": [
+      "👑 Queen-size 100cm x 120cm coverage",
+      "🌸 Premium coral fleece double-sided",
+      "🌡️ Ideal for AC rooms and mild winters",
+      "👶 Safe for newborns and toddlers",
+      "🌿 Free of harmful chemicals",
+      "🙌 Machine washable, retains softness"
+    ],
+    "categories": ["queen-coral"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "qc-002",
+    "slug": "queen-coral-baby-blanket-medium",
+    "name": "Queen Coral Premium Baby Blanket | Medium",
+    "categoryId": "queen-coral",
+    "images": ["/images/products/product1.png"],
+    "price": 1199,
+    "salePrice": 999,
+    "discount": 17,
+    "inStock": true,
+    "features": [
+      "👑 Medium 80cm x 100cm size",
+      "🌸 Double-layered coral fleece",
+      "👶 Lightweight and warm",
+      "🙌 Easy care wash"
+    ],
+    "categories": ["queen-coral"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "qc-003",
+    "slug": "queen-coral-baby-blanket-small",
+    "name": "Queen Coral Premium Baby Blanket | Small",
+    "categoryId": "queen-coral",
+    "images": ["/images/products/product1.png"],
+    "price": 899,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "👑 Compact 60cm x 80cm pram size",
+      "🌸 Single-layer coral fleece",
+      "👶 Perfect travel blanket",
+      "🙌 Machine washable"
+    ],
+    "categories": ["queen-coral"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "wf-001",
+    "slug": "wrap-with-flower-rose-pink",
+    "name": "Wrap with Flower Baby Blanket | Rose Pink",
+    "categoryId": "wrap-with-flower",
+    "images": ["/images/products/product1.png", "/images/products/product1.png"],
+    "price": 999,
+    "salePrice": 849,
+    "discount": 15,
+    "inStock": true,
+    "features": [
+      "🌸 Elegant floral embroidery design",
+      "🌿 100% soft cotton muslin",
+      "👶 Multi-use: wrap, blanket, nursing cover",
+      "📐 Size: 90cm x 90cm",
+      "🎁 Beautiful gift packaging",
+      "🙌 Pre-washed, soft from day one"
+    ],
+    "categories": ["wrap-with-flower"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "wf-002",
+    "slug": "wrap-with-flower-lavender",
+    "name": "Wrap with Flower Baby Blanket | Lavender",
+    "categoryId": "wrap-with-flower",
+    "images": ["/images/products/product1.png"],
+    "price": 999,
+    "salePrice": 849,
+    "discount": 15,
+    "inStock": true,
+    "features": [
+      "🌸 Floral print muslin wrap",
+      "🌿 Breathable 4-layer gauze",
+      "👶 Oversized for versatile use",
+      "🙌 Gets softer with every wash"
+    ],
+    "categories": ["wrap-with-flower"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  },
+  {
+    "id": "wf-003",
+    "slug": "wrap-with-flower-sunflower-yellow",
+    "name": "Wrap with Flower Baby Blanket | Sunflower Yellow",
+    "categoryId": "wrap-with-flower",
+    "images": ["/images/products/product1.png"],
+    "price": 1099,
+    "salePrice": null,
+    "discount": null,
+    "inStock": false,
+    "features": [
+      "🌻 Sunflower print on organic muslin",
+      "🌿 GOTS certified cotton",
+      "👶 Ideal for summer use",
+      "🙌 Lightweight and packable"
+    ],
+    "categories": ["wrap-with-flower"],
+    "returnPolicy": "Easy 7 days return and exchanges available!"
+  }
+]
