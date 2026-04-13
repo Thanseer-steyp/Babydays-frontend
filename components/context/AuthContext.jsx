@@ -1,75 +1,49 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import axiosInstance from "@/components/config/AxiosInstance";
-import { usePathname } from "next/navigation";
+import axiosPrivate from "@/components/config/AxiosPrivate";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const pathname = usePathname();
 
-  const fetchUser = async (token) => {
+  // 🔥 Fetch user from backend (cookie-based auth)
+  const fetchUser = async () => {
     try {
-      const response = await axiosInstance.get("user/me/", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await axiosPrivate.get("user/me/", {
+        withCredentials: true, // 🔥 VERY IMPORTANT
       });
-      const { username, email } = response.data;
-      setUser({ username, email });
-    } catch (error) {
-      console.error("Error fetching user info:", error.response || error.message);
-      logout();
+
+      setUser(res.data);
+    } catch (err) {
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔥 Run once on app load
   useEffect(() => {
-    if (!accessToken) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-    try {
-      const decoded = jwtDecode(accessToken);
-      const remainingTime = decoded.exp * 1000 - Date.now();
-      if (remainingTime <= 0) {
-        logout();
-        return;
-      }
-      const timer = setTimeout(logout, remainingTime);
-      fetchUser(accessToken);
-      return () => clearTimeout(timer);
-    } catch {
-      logout();
-    }
-  }, [accessToken]);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("access");
-    if (stored) setAccessToken(stored);
-    else setLoading(false);
+    fetchUser();
   }, []);
 
-  const login = ({ access, refresh, username, email }) => {
-    localStorage.setItem("access", access);
-    localStorage.setItem("refresh", refresh);
-    setAccessToken(access);
-    setUser({ username, email });
-    if (!pathname.startsWith("/checkout")) {
-      window.location.reload();
-    }
+  // 🔥 After login success
+  const login = async () => {
+    await fetchUser(); // refresh user from backend
   };
 
-  const logout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    localStorage.removeItem("checkoutItems");
-    setAccessToken(null);
+  // 🔥 Logout
+  const logout = async () => {
+    try {
+      await axiosPrivate.post("register/logout/", {}, {
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+
     setUser(null);
   };
 
@@ -81,8 +55,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
-
-
-
-

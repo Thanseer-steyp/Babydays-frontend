@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 import ProductCard from "@/components/ProductCard";
 
 const SearchIcon = () => (
@@ -24,7 +24,7 @@ function ProductsContent() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    axiosInstance.get("public/categories/").then((r) => setCategories(r.data)).catch(() => { });
+    axiosPublic.get("public/categories/").then((r) => setCategories(r.data)).catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ function ProductsContent() {
         const params = new URLSearchParams();
         if (appliedSearch) params.set("q", appliedSearch);
         if (category) params.set("category", category);
-        const res = await axiosInstance.get(`public/products/?${params.toString()}`);
+        const res = await axiosPublic.get(`public/products/?${params.toString()}`);
         setProducts(res.data);
       } catch {
         setProducts([]);

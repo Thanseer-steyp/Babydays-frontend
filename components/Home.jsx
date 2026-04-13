@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 
 const ChevronRight = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -70,7 +70,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const catRes = await axiosInstance.get("public/categories/");
+        const catRes = await axiosPublic.get("public/categories/");
         const cats = catRes.data;
         setCategories(cats);
 
@@ -78,7 +78,7 @@ export default function HomePage() {
         await Promise.all(
           cats.map(async (cat) => {
             try {
-              const prodRes = await axiosInstance.get(`public/products/?category=${cat.slug}`);
+              const prodRes = await axiosPublic.get(`public/products/?category=${cat.slug}`);
               productMap[cat.slug] = prodRes.data.slice(0, 10);
             } catch {
               productMap[cat.slug] = [];
@@ -124,7 +124,7 @@ export default function HomePage() {
         ))}
         {categories.length === 0 && (
           <div className="text-center py-20 text-gray-400">
-            <p className="text-5xl mb-4"><img src="/icons/shoppingbag.png" alt="shoppingbag" className="w-32 h-32" /></p>
+            <img src="/icons/shoppingbag.png" alt="shoppingbag" className="w-32 h-32 mx-auto" />
             <p className="font-bold text-lg">No products yet. Check back soon!</p>
           </div>
         )}

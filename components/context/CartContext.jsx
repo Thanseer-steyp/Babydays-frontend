@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPrivate from "@/components/config/AxiosPrivate";
 import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
@@ -20,7 +20,7 @@ export const CartProvider = ({ children }) => {
     }
     try {
       setLoading(true);
-      const res = await axiosInstance.get("user/cart/");
+      const res = await axiosPrivate.get("user/cart/");
       setCartItems(res.data);
       setCartCount(res.data.reduce((sum, item) => sum + item.quantity, 0));
     } catch (err) {
@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = async (slug, variantId, quantity = 1) => {
     try {
-      await axiosInstance.post(`user/cart/add/${slug}/`, { variant_id: variantId, quantity });
+      await axiosPrivate.post(`user/cart/add/${slug}/`, { variant_id: variantId, quantity });
       await fetchCart();
       return { success: true };
     } catch (err) {
@@ -46,7 +46,7 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = async (slug) => {
     try {
-      await axiosInstance.delete(`user/cart/remove/${slug}/`);
+      await axiosPrivate.delete(`user/cart/remove/${slug}/`);
       await fetchCart();
     } catch (err) {
       console.error("Remove from cart error:", err);
@@ -55,7 +55,7 @@ export const CartProvider = ({ children }) => {
 
   const updateQty = async (slug, quantity) => {
     try {
-      await axiosInstance.patch(`user/cart/update/${slug}/`, { quantity });
+      await axiosPrivate.patch(`user/cart/update/${slug}/`, { quantity });
       await fetchCart();
     } catch (err) {
       console.error("Update qty error:", err);

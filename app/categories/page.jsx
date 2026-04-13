@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axiosInstance.get("public/categories/")
+    axiosPublic.get("public/categories/")
       .then((r) => setCategories(r.data))
       .catch(() => { })
       .finally(() => setLoading(false));
@@ -63,7 +63,7 @@ export default function CategoriesPage() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-teal-50">
-                      <span className="text-5xl"><img src="/icons/shoppingbag.png" alt="" /></span>
+                      <span className="text-5xl"><img src="/icons/shoppingbag.png" alt={cat.name} /></span>
                     </div>
                   )}
                 </div>

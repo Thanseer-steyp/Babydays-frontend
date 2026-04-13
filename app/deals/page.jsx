@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 
@@ -16,7 +16,7 @@ export default function DealsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axiosInstance.get("public/products/")
+    axiosPublic.get("public/products/")
       .then((r) => {
         // Filter products that have a discount (mrp > price)
         const deals = r.data.filter((p) => {

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/context/AuthContext";
 import { useCart } from "@/components/context/CartContext";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 
 // ── Icons ────────────────────────────────────────────────────────────────────
 const SearchIcon = () => (
@@ -149,7 +149,7 @@ export default function Header() {
     }
     const timer = setTimeout(() => {
       setIsSearching(true);
-      axiosInstance.get(`public/products/?q=${encodeURIComponent(searchValue.trim())}`)
+      axiosPublic.get(`public/products/?q=${encodeURIComponent(searchValue.trim())}`)
         .then((res) => {
           setSearchResults(res.data);
           setShowSearchDropdown(true);
@@ -166,7 +166,7 @@ export default function Header() {
   useOutsideClick(browseRef, () => setBrowseOpen(false));
 
   useEffect(() => {
-    axiosInstance.get("public/categories/")
+    axiosPublic.get("public/categories/")
       .then((res) => setApiCategories(res.data))
       .catch(() => { });
   }, []);
@@ -180,9 +180,10 @@ export default function Header() {
 
   const navLinks = [
     { label: "Hot Deals", hot: true, href: "/deals" },
+    { label: "New Arrivals", href: "/arrivals" },
     { label: "All Products", href: "/products" },
-    { label: "Categories", href: "/categories" },
-    { label: "Collections", href: "/collections" },
+    { label: "All Categories", href: "/categories" },
+    { label: "Most Rated", href: "/rated" },
   ];
 
   const searchDropdownUI = showSearchDropdown && (

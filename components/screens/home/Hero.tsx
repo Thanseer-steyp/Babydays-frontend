@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 import heroData from "@/data/hero.json";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -50,7 +50,7 @@ export default function HeroSection() {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    axiosInstance
+    axiosPublic
       .get(`public/categories/`)
       .then((res) => setCategories(res.data))
       .catch((err) => console.error("Failed to load categories", err));

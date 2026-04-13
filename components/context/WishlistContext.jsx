@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPrivate from "@/components/config/AxiosPrivate";
 import { useAuth } from "./AuthContext";
 
 const WishlistContext = createContext();
@@ -18,7 +18,7 @@ export const WishlistProvider = ({ children }) => {
       return;
     }
     try {
-      const res = await axiosInstance.get("user/wishlist/");
+      const res = await axiosPrivate.get("user/wishlist/");
       setWishlistItems(res.data);
       setWishlistIds(new Set(res.data.map((p) => p.id)));
     } catch (err) {
@@ -32,7 +32,7 @@ export const WishlistProvider = ({ children }) => {
 
   const addToWishlist = async (slug) => {
     try {
-      await axiosInstance.post(`user/wishlist/add/${slug}/`);
+      await axiosPrivate.post(`user/wishlist/add/${slug}/`);
       await fetchWishlist();
     } catch (err) {
       console.error("Add wishlist error:", err);
@@ -41,7 +41,7 @@ export const WishlistProvider = ({ children }) => {
 
   const removeFromWishlist = async (slug) => {
     try {
-      await axiosInstance.delete(`user/wishlist/remove/${slug}/`);
+      await axiosPrivate.delete(`user/wishlist/remove/${slug}/`);
       await fetchWishlist();
     } catch (err) {
       console.error("Remove wishlist error:", err);

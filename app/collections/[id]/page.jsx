@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 import ProductCard from "@/components/ProductCard";
 
 const COLLECTIONS = {
@@ -23,7 +23,7 @@ export default function CollectionDetailPage({ params }) {
 
   useEffect(() => {
     if (!collection) return;
-    axiosInstance.get("public/products/")
+    axiosPublic.get("public/products/")
       .then((r) => {
         const filtered = r.data.filter((p) => {
           const price = Number(p.lowest_variant_price ?? p.price ?? 0);

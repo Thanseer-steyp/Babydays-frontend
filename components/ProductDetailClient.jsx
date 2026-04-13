@@ -1,11 +1,10 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { useCart } from "@/components/context/CartContext";
 import { useWishlist } from "@/components/context/WishlistContext";
 import { useAuth } from "@/components/context/AuthContext";
+import AuthPopup from "@/components/screens/auth/AuthPopup";
+import axiosPublic from "./config/AxiosPublic";
+import axiosPrivate from "./config/AxiosPrivate";
 import { useRouter } from "next/navigation";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -13,28 +12,74 @@ const isVideo = (url) => /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url ?? "");
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 const ChevronLeft = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="#000" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="#000"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="15 18 9 12 15 6" />
   </svg>
 );
 const ChevronRight = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="#000" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="#000"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="9 18 15 12 9 6" />
   </svg>
 );
 const HeartIcon = ({ filled }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? "#e11d48" : "none"} stroke={filled ? "#e11d48" : "currentColor"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill={filled ? "#e11d48" : "none"}
+    stroke={filled ? "#e11d48" : "currentColor"}
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
   </svg>
 );
 const ShareIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
-    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="18" cy="5" r="3" />
+    <circle cx="6" cy="12" r="3" />
+    <circle cx="18" cy="19" r="3" />
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
   </svg>
 );
 const StarIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="#f59e0b"
+    stroke="#f59e0b"
+    strokeWidth="1"
+  >
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
   </svg>
 );
@@ -45,14 +90,32 @@ const PlayIcon = () => (
   </svg>
 );
 const MuteIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="white"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
     <line x1="23" y1="9" x2="17" y2="15" />
     <line x1="17" y1="9" x2="23" y2="15" />
   </svg>
 );
 const UnmuteIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="white"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
     <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
     <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
@@ -63,8 +126,6 @@ const UnmuteIcon = () => (
 const VideoPlayer = ({ src, isMuted, onToggleMute }) => {
   const videoRef = useRef(null);
 
-  // Sync muted state to the video element imperatively
-  // (React's muted prop doesn't react to changes after mount)
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.muted = isMuted;
@@ -107,7 +168,7 @@ const Thumbnail = ({ src, alt, active, onClick }) => (
         <PlayIcon />
       </div>
     ) : (
-      <Image src={src} alt={alt} fill className="object-cover" />
+      <img src={src} alt={alt} className="w-full h-full object-cover" />
     )}
   </button>
 );
@@ -117,93 +178,178 @@ export default function ProductDetailClient({ product }) {
   const { addToCart } = useCart();
   const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
   const { user } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
+  const loginRef = useRef(null);
   const router = useRouter();
 
   const [activeImg, setActiveImg] = useState(0);
   const [isMuted, setIsMuted] = useState(true); // videos start muted (browser autoplay policy)
+  const { login } = useAuth();
+  const [pendingAction, setPendingAction] = useState(null);
 
-  const [selectedVariant, setSelectedVariant] = useState(
-    product.variants?.find((v) => v.is_available) ?? product.variants?.[0] ?? null
+  const handleSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential;
+
+    try {
+      await axiosPublic.post(
+        "http://localhost:8000/api/v1/register/google-login/",
+        { token },
+        { withCredentials: true },
+      );
+
+      login(); // 🔥 update user from backend
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  // Group variants by size
+  const groupedVariants = Object.values(
+    product.variants.reduce((acc, v) => {
+      if (!acc[v.size]) {
+        acc[v.size] = {
+          size: v.size,
+          items: [],
+          image: v.image, // take first image for that size
+        };
+      }
+      acc[v.size].items.push(v);
+      return acc;
+    }, {}),
   );
-  const [selectedSize, setSelectedSize] = useState(
-    selectedVariant?.sizes?.find((s) => s.is_available) ?? selectedVariant?.sizes?.[0] ?? null
+
+  const [selectedGroup, setSelectedGroup] = useState(
+    groupedVariants.find((g) => g.items.some((i) => i.is_available)) ||
+      groupedVariants[0],
+  );
+
+  const [selectedItem, setSelectedItem] = useState(
+    selectedGroup?.items.find((i) => i.is_available) || selectedGroup?.items[0],
   );
 
   useEffect(() => {
-    if (selectedVariant) {
-      setSelectedSize(
-        selectedVariant.sizes?.find((s) => s.is_available) ?? selectedVariant.sizes?.[0] ?? null
+    if (selectedGroup) {
+      setSelectedItem(
+        selectedGroup.items.find((i) => i.is_available) ||
+          selectedGroup.items[0],
       );
     }
-  }, [selectedVariant]);
+  }, [selectedGroup]);
 
   const [qty, setQty] = useState(1);
   const [cartMsg, setCartMsg] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
 
   // ── Build media list (images + videos) ──────────────────────────────────────
-  let mediaList = product.media?.map((m) => m.media).filter(Boolean) ?? [];
-  if (mediaList.length === 0 && product.main_media) mediaList.push(product.main_media);
+  // ── Build media list (clean & no duplicates) ──
+  let mediaList = [];
 
-  if (selectedVariant?.media_gallery?.length > 0) {
-    mediaList = selectedVariant.media_gallery.map((m) => m.media).filter(Boolean);
-    if (selectedVariant.image && !mediaList.includes(selectedVariant.image)) {
-      mediaList = [selectedVariant.image, ...mediaList];
-    }
-  } else {
-    if (product.variants?.length > 0) {
-      product.variants.forEach((v) => {
-        if (v.image && !mediaList.includes(v.image)) mediaList.push(v.image);
-      });
-    }
-    if (selectedVariant?.image) {
-      const vImg = selectedVariant.image;
-      mediaList = mediaList.filter((m) => m !== vImg);
-      mediaList.unshift(vImg);
-    }
+  // 1. ONLY selected variant image
+  if (selectedItem?.image) {
+    mediaList.push(selectedItem.image);
   }
 
+  // 2. Optional: add product media (excluding duplicate)
+  const productMedia = product.media?.map((m) => m.media).filter(Boolean) ?? [];
+
+  const filteredProductMedia = productMedia.filter(
+    (m) => m !== selectedItem?.image,
+  );
+
+  mediaList.push(...filteredProductMedia);
+
+  // 3. fallback
+  if (mediaList.length === 0 && product.main_media) {
+    mediaList.push(product.main_media);
+  }
+
+  useEffect(() => {
+    setActiveImg(0);
+  }, [selectedItem]);
+
   // ── Pricing ──────────────────────────────────────────────────────────────────
-  const price       = selectedSize?.price ?? product.lowest_variant_price ?? product.price ?? 0;
-  const mrp         = selectedSize?.mrp   ?? product.lowest_variant_mrp   ?? product.mrp   ?? price;
-  const discount    = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : null;
-  const isAvailable = product.is_available && (selectedSize ? selectedSize.is_available : true);
-  const wishlisted  = isWishlisted(product.id);
+  const price = selectedItem?.price ?? product.price ?? 0;
+  const mrp = selectedItem?.mrp ?? product.mrp ?? price;
+
+  const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : null;
+  const isAvailable =
+    product.is_available && (selectedItem ? selectedItem.is_available : true);
+  const wishlisted = isWishlisted(product.id);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleWishlist = async () => {
-    if (!user) { router.push("/auth"); return; }
+    if (!user) {
+      setShowLogin(true);
+
+      setTimeout(() => {
+        document.getElementById("googleLoginTrigger")?.click();
+      }, 100);
+
+      return;
+    }
     if (wishlisted) await removeFromWishlist(product.slug);
     else await addToWishlist(product.slug);
   };
 
   const handleAddToCart = async () => {
-    if (!user) { router.push("/auth"); return; }
-    if (product.variants?.length > 0 && !selectedSize) {
+    if (!user) {
+      setShowLogin(true);
+
+      setTimeout(() => {
+        document.getElementById("googleLoginTrigger")?.click();
+      }, 100);
+
+      return;
+    }
+    if (product.variants?.length > 0 && !selectedItem) {
       setCartMsg({ type: "error", text: "Please select a size" });
       return;
     }
-    setAddingToCart(true);
-    const variantId = selectedSize ? selectedSize.id : null;
+
+    const variantId = selectedItem?.id;
     const result = await addToCart(product.slug, variantId, qty);
     setCartMsg(
       result.success
         ? { type: "success", text: "Added to cart!" }
-        : { type: "error",   text: "Failed to add to cart" }
+        : { type: "error", text: "Failed to add to cart" },
     );
     setAddingToCart(false);
     setTimeout(() => setCartMsg(null), 3000);
   };
 
   const handleBuyNow = async () => {
-    if (!user) { router.push("/auth"); return; }
-    if (product.variants?.length > 0 && !selectedSize) {
-      setCartMsg({ type: "error", text: "Please select a size" });
+    if (!user) {
+      setPendingAction("BUY_NOW"); // ✅ string
+      setShowLogin(true);
       return;
     }
-    const variantId = selectedSize ? selectedSize.id : null;
-    await addToCart(product.slug, variantId, qty);
-    router.push("/cart");
+
+    proceedToCheckout();
+  };
+
+  const proceedToCheckout = async () => {
+    try {
+      // 1️⃣ Reset session
+      await axiosPrivate.post("user/checkout/session/create/");
+
+      // 2️⃣ Add item
+      await axiosPrivate.post("user/checkout/session/add/", {
+        variant_id: selectedItem.id,
+        qty: qty,
+      });
+      router.push("/checkout");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    if (user && pendingAction === "BUY_NOW") {
+      proceedToCheckout();
+      setPendingAction(null);
+    }
+  }, [user]);
+
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
   };
 
   const handleShare = () => {
@@ -232,11 +378,12 @@ export default function ProductDetailClient({ product }) {
         .img-fade { animation: fadeIn 0.25s ease forwards; }
       `}</style>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16" style={{ fontFamily: "'Nunito', sans-serif" }}>
-
+      <div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16"
+        style={{ fontFamily: "'Nunito', sans-serif" }}
+      >
         {/* ── Left: Media ── */}
         <div className="flex flex-col gap-4">
-
           {/* Main viewer */}
           <div
             className="relative bg-gray-50 rounded-2xl overflow-hidden border border-gray-100"
@@ -251,21 +398,26 @@ export default function ProductDetailClient({ product }) {
                   onToggleMute={() => setIsMuted((m) => !m)}
                 />
               ) : (
-                <Image
+                <img
                   key={activeImg}
                   src={currentMedia}
                   alt={`${product.title} - ${activeImg + 1}`}
-                  fill
-                  className="object-cover img-fade"
-                  priority
+                  className="w-full h-full object-cover img-fade"
                 />
               )
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-200">
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
+                <svg
+                  width="80"
+                  height="80"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
                 </svg>
               </div>
             )}
@@ -274,13 +426,19 @@ export default function ProductDetailClient({ product }) {
             {mediaList.length > 1 && (
               <>
                 <button
-                  onClick={() => setActiveImg((i) => (i - 1 + mediaList.length) % mediaList.length)}
+                  onClick={() =>
+                    setActiveImg(
+                      (i) => (i - 1 + mediaList.length) % mediaList.length,
+                    )
+                  }
                   className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white hover:scale-110 transition-all"
                 >
                   <ChevronLeft />
                 </button>
                 <button
-                  onClick={() => setActiveImg((i) => (i + 1) % mediaList.length)}
+                  onClick={() =>
+                    setActiveImg((i) => (i + 1) % mediaList.length)
+                  }
                   className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white hover:scale-110 transition-all"
                 >
                   <ChevronRight />
@@ -307,41 +465,62 @@ export default function ProductDetailClient({ product }) {
 
         {/* ── Right: Details ── */}
         <div className="flex flex-col gap-5">
-
           {/* Stock + share */}
           <div className="flex items-center justify-between">
-            <span className={`text-xs font-bold px-4 py-1.5 rounded-full ${isAvailable ? "bg-green-100 text-green-700" : "bg-rose-100 text-rose-600"}`}>
+            <span
+              className={`text-xs font-bold px-4 py-1.5 rounded-full ${isAvailable ? "bg-green-100 text-green-700" : "bg-rose-100 text-rose-600"}`}
+            >
               {isAvailable ? "✓ In Stock" : "Out of stock"}
             </span>
-            <button onClick={handleShare} className="text-teal-500 hover:text-teal-700 transition-colors p-1">
+            <button
+              onClick={handleShare}
+              className="text-teal-500 hover:text-teal-700 transition-colors p-1"
+            >
               <ShareIcon />
             </button>
           </div>
 
           {/* Title */}
-          <h1 className="text-xl md:text-2xl font-black text-gray-900 leading-snug">{product.title}</h1>
+          <h1 className="text-xl md:text-2xl font-black text-gray-900 leading-snug">
+            {product.title}
+          </h1>
 
           {/* Ratings */}
           {product.rating_count > 0 && (
             <div className="flex items-center gap-2">
               <div className="flex">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className={i < Math.round(product.average_rating) ? "text-amber-400" : "text-gray-200"}>
+                  <span
+                    key={i}
+                    className={
+                      i < Math.round(product.average_rating)
+                        ? "text-amber-400"
+                        : "text-gray-200"
+                    }
+                  >
                     <StarIcon />
                   </span>
                 ))}
               </div>
-              <span className="text-sm font-bold text-gray-700">{product.average_rating}</span>
-              <span className="text-sm text-gray-400">({product.rating_count} reviews)</span>
+              <span className="text-sm font-bold text-gray-700">
+                {product.average_rating}
+              </span>
+              <span className="text-sm text-gray-400">
+                ({product.rating_count} reviews)
+              </span>
             </div>
           )}
 
           {/* Price */}
           <div className="flex items-baseline gap-3 flex-wrap">
-            <span className="text-3xl font-black text-gray-900">₹{Number(price).toLocaleString("en-IN")}</span>
+            <span className="text-3xl font-black text-gray-900">
+              ₹{Number(price).toLocaleString("en-IN")}
+            </span>
             {mrp > price && (
               <>
-                <span className="text-lg text-gray-400 line-through font-medium">₹{Number(mrp).toLocaleString("en-IN")}</span>
+                <span className="text-lg text-gray-400 line-through font-medium">
+                  ₹{Number(mrp).toLocaleString("en-IN")}
+                </span>
                 {discount && (
                   <span className="text-sm font-black text-orange-500 bg-orange-50 px-2 py-0.5 rounded">
                     {discount}% off
@@ -351,40 +530,52 @@ export default function ProductDetailClient({ product }) {
             )}
           </div>
           {product.delivery_charge === 0 && (
-            <p className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg w-fit">✓ Free Delivery</p>
+            <p className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg w-fit">
+              ✓ Free Delivery
+            </p>
           )}
 
           <div className="w-full h-px bg-gray-100" />
+          <p className="text-sm text-gray-500">
+            Category:{" "}
+            <a
+              href={`/category/${product.product_category}`}
+              className="text-teal-600 font-bold hover:underline capitalize"
+            >
+              {product.product_category}
+            </a>
+          </p>
 
           {/* Variants (prints) */}
-          {product.variants?.length > 0 && (
+          {/* Variant Images (based on selected size) */}
+          {selectedGroup?.items?.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-sm font-bold text-gray-700">
-                Choose Print: <span className="font-normal text-gray-500">{selectedVariant?.color}</span>
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {product.variants.map((v) => (
+              <p className="text-sm font-bold text-gray-700">Select Design</p>
+
+              <div className="flex gap-3 flex-wrap">
+                {selectedGroup.items.map((item) => (
                   <button
-                    key={v.id}
-                    onClick={() => { setSelectedVariant(v); setActiveImg(0); }}
-                    title={v.color}
-                    className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedVariant?.id === v.id
-                        ? "border-teal-500 shadow-sm"
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedItem(item);
+                      setActiveImg(0);
+                    }}
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 ${
+                      selectedItem?.id === item.id
+                        ? "border-teal-500"
                         : "border-gray-200 hover:border-teal-300"
                     }`}
                   >
-                    {v.image ? (
-                      <Image
-                        src={v.image}
-                        alt={`${product.title} ${v.color || ""}`}
-                        width={56}
-                        height={56}
-                        className="object-cover w-full h-full"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-400 bg-gray-50 uppercase leading-tight text-center break-words p-1">
-                        {v.color.slice(0, 8)}
+                    <img
+                      src={item.image}
+                      alt="variant"
+                      className="w-full h-full object-cover"
+                    />
+
+                    {/* Out of stock overlay */}
+                    {!item.is_available && (
+                      <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-xs font-bold text-red-500">
+                        Out
                       </div>
                     )}
                   </button>
@@ -392,26 +583,33 @@ export default function ProductDetailClient({ product }) {
               </div>
             </div>
           )}
-
-          {/* Sizes */}
-          {selectedVariant?.sizes?.length > 0 && (
+          {/* Sizes (Grouped) */}
+          {groupedVariants.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-sm font-bold text-gray-700">Size</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedVariant.sizes.map((s) => (
+              <p className="text-sm font-bold text-gray-700">
+                Size:{" "}
+                <span className="font-normal text-gray-500">
+                  {selectedGroup?.size}
+                </span>
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                {groupedVariants.map((group) => (
                   <button
-                    key={s.id}
-                    onClick={() => setSelectedSize(s)}
-                    disabled={!s.is_available}
-                    className={`px-3 py-1.5 rounded-lg border-2 text-sm font-bold transition-all ${
-                      selectedSize?.id === s.id
-                        ? "border-teal-500 bg-teal-50 text-teal-700"
-                        : s.is_available
-                        ? "border-gray-200 text-gray-700 hover:border-teal-300"
-                        : "border-gray-100 text-gray-300 cursor-not-allowed line-through"
+                    key={group.size}
+                    onClick={() => {
+                      setSelectedGroup(group);
+                      setActiveImg(0);
+                    }}
+                    className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg border-2 ${
+                      selectedGroup?.size === group.size
+                        ? "border-teal-500 bg-teal-50"
+                        : "border-gray-200 hover:border-teal-300"
                     }`}
                   >
-                    {s.size}
+                    <span className="text-xs font-bold text-black">
+                      {group.size}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -422,7 +620,10 @@ export default function ProductDetailClient({ product }) {
           {features.length > 0 && (
             <ul className="flex flex-col gap-1.5">
               {features.map((f, i) => (
-                <li key={i} className="text-sm text-gray-600 leading-relaxed flex items-start gap-2">
+                <li
+                  key={i}
+                  className="text-sm text-gray-600 leading-relaxed flex items-start gap-2"
+                >
                   <span className="text-teal-500 mt-0.5 flex-shrink-0">◉</span>
                   {f.replace(/^◉\s*/, "")}
                 </li>
@@ -434,9 +635,13 @@ export default function ProductDetailClient({ product }) {
 
           {/* Cart message */}
           {cartMsg && (
-            <div className={`text-sm font-bold px-4 py-2 rounded-lg ${
-              cartMsg.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
-            }`}>
+            <div
+              className={`text-sm font-bold px-4 py-2 rounded-lg ${
+                cartMsg.type === "success"
+                  ? "bg-green-50 text-green-700"
+                  : "bg-red-50 text-red-600"
+              }`}
+            >
               {cartMsg.text}
             </div>
           )}
@@ -470,20 +675,19 @@ export default function ProductDetailClient({ product }) {
           {/* Description */}
           {product.description && (
             <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-sm font-bold text-gray-700 mb-1">Description</p>
-              <p className="text-sm text-gray-600 leading-relaxed">{product.description}</p>
+              <p className="text-sm font-bold text-gray-700 mb-1">
+                Description
+              </p>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {product.description}
+              </p>
             </div>
           )}
 
           {/* Category */}
-          <p className="text-sm text-gray-500">
-            Category:{" "}
-            <Link href={`/category/${product.product_category}`} className="text-teal-600 font-bold hover:underline">
-              {product.product_category}
-            </Link>
-          </p>
         </div>
       </div>
+      {showLogin && <AuthPopup onSuccess={handleLoginSuccess} />}
     </>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPrivate from "@/components/config/AxiosPrivate";
 import { useAuth } from "@/components/context/AuthContext";
 
 const statusColors = {
@@ -77,7 +77,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     if (!user) return;
-    axiosInstance.get("user/orders/")
+    axiosPrivate.get("user/orders/")
       .then((r) => setOrders(r.data))
       .catch(() => setOrders([]))
       .finally(() => setLoading(false));

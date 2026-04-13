@@ -9,18 +9,33 @@ export default function SplashScreen({ children }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    const navEntry = performance.getEntriesByType("navigation")[0];
+    const navType = navEntry?.type;
+
+    const isInternalNav =
+      document.referrer && document.referrer.includes(window.location.origin);
+
+    // ❌ Skip ONLY internal navigation
+    if (navType === "navigate" && isInternalNav) {
+      setLoading(false);
+      return;
+    }
+
+    // ✅ Show splash (first visit + reload)
     let value = 0;
 
     const interval = setInterval(() => {
-      value += Math.random() * 20; // random smooth progress
+      value += Math.random() * 20;
+
       if (value >= 100) {
         value = 100;
         clearInterval(interval);
 
         setTimeout(() => {
           setLoading(false);
-        }, 300); // small delay for smooth finish
+        }, 300);
       }
+
       setProgress(value);
     }, 200);
 
@@ -30,7 +45,6 @@ export default function SplashScreen({ children }) {
   if (loading) {
     return (
       <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
-
         {/* Logo with Shine Effect */}
         <div className="relative w-28 h-28 overflow-hidden">
           <Image
@@ -86,7 +100,6 @@ export default function SplashScreen({ children }) {
             }
           }
         `}</style>
-
       </div>
     );
   }

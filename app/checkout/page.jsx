@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthModal from "@/components/includes/AuthModal";
-import api from "@/components/config/Api";
+import axiosPrivate from "@/components/config/AxiosPrivate";
 import { useAuth } from "@/components/context/AuthContext";
 import { useCart } from "@/components/context/CartContext";
 
@@ -45,6 +45,7 @@ export default function CheckoutPage() {
   const [hasAddress, setHasAddress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("prepaid");
   const [showCodModal, setShowCodModal] = useState(false);
+  const [checkoutSessionId, setCheckoutSessionId] = useState(null);
 
   const [showAuth, setShowAuth] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState([]);
@@ -52,51 +53,28 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const loadCheckoutItems = async () => {
-      const stored = localStorage.getItem("checkoutItems");
-      if (!stored) return;
-
       try {
-        const localItems = JSON.parse(stored);
+        const res = await axiosPrivate.get("user/checkout/session/", {
+          withCredentials: true,
+        });
 
-        const res = await api.get("api/v1/public/products/");
-        const mergedItems = mergeCheckoutWithProducts(localItems, res.data);
-
-        setCheckoutItems(mergedItems);
+        setCheckoutItems(res.data.items || []);
+        setCheckoutSessionId(res.data.id); // 👈 ADD THIS
       } catch (err) {
-        console.error("Failed to sync checkout items", err);
+        console.error("Failed to fetch checkout session", err);
       }
     };
 
-    loadCheckoutItems();
-  }, []);
-
-  const mergeCheckoutWithProducts = (checkoutItems, products) => {
-    const productMap = {};
-
-    products.forEach((p) => {
-      productMap[p.slug] = p;
-    });
-
-    return checkoutItems.map((item) => {
-      const product = productMap[item.slug];
-
-      if (!product) return item; // fallback safety
-
-      return {
-        ...item,
-        mrp: product.mrp,
-        price: product.price,
-        delivery_charge: product.delivery_charge,
-        available_stock: product.available_stock,
-      };
-    });
-  };
+    if (user) {
+      loadCheckoutItems();
+    }
+  }, [user]);
 
   const router = useRouter();
 
   const confirmCodOrder = async () => {
     try {
-      await api.post("api/v1/user/create-order/", {
+      await axiosPrivate.post("user/create-order/", {
         items: checkoutItems,
         payment_method: "cod",
         address: address,
@@ -104,7 +82,6 @@ export default function CheckoutPage() {
 
       alert("Order placed successfully (Cash on Delivery)");
       setShowCodModal(false);
-      localStorage.removeItem("checkoutItems");
       clearCart();
       router.push("/orders");
       // router.push("/orders");
@@ -129,9 +106,10 @@ export default function CheckoutPage() {
 
     try {
       // 1️⃣ Create order in backend
-      const orderRes = await api.post("api/v1/user/create-order/", {
+      const orderRes = await axiosPrivate.post("user/create-order/", {
         items: checkoutItems,
         payment_method: paymentMethod,
+        session_id: checkoutSessionId,
         address: address,
       });
 
@@ -145,7 +123,7 @@ export default function CheckoutPage() {
         name: "BABYDAY",
         order_id: razorpay_order_id,
         handler: async (response) => {
-          await api.post("api/v1/user/verify-payment/", {
+          await axiosPrivate.post("user/verify-payment/", {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
@@ -202,7 +180,7 @@ export default function CheckoutPage() {
   /* ---------------- ADDRESS ---------------- */
   const fetchAddress = async () => {
     try {
-      const res = await api.get("api/v1/user/address/");
+      const res = await axiosPrivate.get("user/address/");
       if (res.data?.name) {
         setAddress(res.data);
         setHasAddress(true); // 👈 THIS IS KEY
@@ -214,10 +192,10 @@ export default function CheckoutPage() {
     try {
       if (hasAddress) {
         // UPDATE
-        await api.put("api/v1/user/address/", address);
+        await axiosPrivate.put("user/address/", address);
       } else {
         // CREATE
-        await api.post("api/v1/user/address/", address);
+        await axiosPrivate.post("user/address/", address);
         setHasAddress(true);
       }
 
@@ -230,11 +208,11 @@ export default function CheckoutPage() {
 
   const mrp = checkoutItems.reduce(
     (sum, item) => sum + Number(item.mrp) * item.qty,
-    0
+    0,
   );
   const subtotal = checkoutItems.reduce(
     (sum, item) => sum + Number(item.price) * item.qty,
-    0
+    0,
   );
   const isFreeDelivery = subtotal >= 2000;
 
@@ -242,14 +220,8 @@ export default function CheckoutPage() {
     ? 0
     : checkoutItems.reduce(
         (sum, item) => sum + Number(item.delivery_charge) * item.qty,
-        0
+        0,
       );
-
-  // const delivery = checkoutItems.reduce((sum, item) => {
-  //   const itemTotal = Number(item.price) * item.qty;
-  //   if (itemTotal > 2000) return sum;
-  //   return sum + Number(item.delivery_charge) * item.qty;
-  // }, 0);
 
   const total = subtotal + delivery;
   const discount = mrp - subtotal;

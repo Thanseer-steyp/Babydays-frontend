@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "app/page.jsx", "app/layout.jsx"  ],
+, "app/page.jsx", "app/layout.jsx", "components/ProductDetailClient.jsx", "components/SplashScreen.jsx", "app/category/[slug]/page.jsx", "app/collections/[id]/page.jsx", "app/categories/page.jsx", "app/collections/page.jsx", "components/Home.jsx", "components/screens/home/Hero.tsx", "components/ProductCard.jsx"  ],
   "exclude": ["node_modules"]
 }

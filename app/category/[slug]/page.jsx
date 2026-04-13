@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { use } from "react";
 import Link from "next/link";
-import axiosInstance from "@/components/config/AxiosInstance";
+import axiosPublic from "@/components/config/AxiosPublic";
 import ProductCard from "@/components/ProductCard";
 
 export default function CategoryPage({ params }) {
@@ -19,12 +19,12 @@ export default function CategoryPage({ params }) {
       setLoading(true);
       try {
         // Fetch category info
-        const catRes = await axiosInstance.get("public/categories/");
+        const catRes = await axiosPublic.get("public/categories/");
         const found = catRes.data.find((c) => c.slug === slug);
         setCategory(found ?? null);
 
         // Fetch products in this category
-        const prodRes = await axiosInstance.get(`public/products/?category=${slug}`);
+        const prodRes = await axiosPublic.get(`public/products/?category=${slug}`);
         setProducts(prodRes.data);
       } catch {
         setProducts([]);
