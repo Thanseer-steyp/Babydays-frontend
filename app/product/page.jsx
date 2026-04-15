@@ -43,7 +43,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-white p-6">
       <h1 className="text-3xl font-bold text-center mb-8 text-black">
         Products
       </h1>
@@ -91,7 +91,7 @@ export default function ProductsPage() {
                 </div>
 
                 <Link
-                  href={`/products/${product.slug}`}
+                  href={`/product/${product.slug}`}
                   className="bg-white shadow hover:shadow-lg transition p-2 block text-black border border-black mt-3 text-center rounded"
                 >
                   View
