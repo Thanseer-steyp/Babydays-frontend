@@ -31,7 +31,7 @@ export default function AuthPage() {
         { token },
         { withCredentials: true }
       );
-      await login(); // 🔥 re-fetch user → header updates
+      await login(); 
       router.replace("/");
     } catch (err) {
       setError(err?.response?.data?.error || "Sign-in failed. Please try again.");

@@ -261,7 +261,7 @@ export default function CheckoutPage() {
             <p style={{ fontSize: "14px", color: "#64748b", marginTop: "4px" }}>Complete your order in just a few steps</p>
           </div>
 
-          {/* Stepper */}
+          
           <div className="flex items-center mb-8 max-w-md mx-auto">
             {steps.map((s, idx) => (
               <div key={s.num} className="flex items-center" style={{ flex: idx < steps.length - 1 ? "1" : "0" }}>
@@ -288,7 +288,7 @@ export default function CheckoutPage() {
             ))}
           </div>
 
-          {/* Main layout */}
+          
           <div className="flex flex-col lg:flex-row gap-6 items-start">
 
             {/* Left — steps */}
@@ -526,7 +526,7 @@ export default function CheckoutPage() {
   );
 }
 
-/* ── Step UI ── */
+
 function CodConfirmModal({ open, onClose, onConfirm, total }) {
   if (!open) return null;
   return (
