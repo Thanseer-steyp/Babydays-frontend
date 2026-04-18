@@ -34,9 +34,9 @@ export const CartProvider = ({ children }) => {
     fetchCart();
   }, [fetchCart]);
 
-  const addToCart = async (slug, variantId, quantity = 1) => {
+  const addToCart = async (slug, size) => {
     try {
-      await axiosPrivate.post(`user/cart/add/${slug}/`, { variant_id: variantId, quantity });
+      await axiosPrivate.post(`user/cart/add/${slug}/`, { size });
       await fetchCart();
       return { success: true };
     } catch (err) {
@@ -44,18 +44,20 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const removeFromCart = async (slug) => {
+  const removeFromCart = async (slug, size) => {
     try {
-      await axiosPrivate.delete(`user/cart/remove/${slug}/`);
+      await axiosPrivate.delete(`user/cart/remove/${slug}/`, { data: { size } });
       await fetchCart();
     } catch (err) {
       console.error("Remove from cart error:", err);
     }
   };
 
-  const updateQty = async (slug, quantity) => {
+  
+  const updateQty = async (slug, size, newQty, currentQty) => {
+    const action = newQty > currentQty ? "increase" : "decrease";
     try {
-      await axiosPrivate.patch(`user/cart/update/${slug}/`, { quantity });
+      await axiosPrivate.patch(`user/cart/update/${slug}/`, { action, size });
       await fetchCart();
     } catch (err) {
       console.error("Update qty error:", err);
@@ -63,16 +65,12 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, cartCount, loading, fetchCart, addToCart, removeFromCart, updateQty }}>
+    <CartContext.Provider
+      value={{ cartItems, cartCount, loading, fetchCart, addToCart, removeFromCart, updateQty }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
 
 export const useCart = () => useContext(CartContext);
-
-
-
-
-
-

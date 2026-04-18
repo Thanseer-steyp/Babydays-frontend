@@ -18,13 +18,11 @@ export default function DealsPage() {
   useEffect(() => {
     axiosPublic.get("public/products/")
       .then((r) => {
-        // Filter products that have a discount (mrp > price)
         const deals = r.data.filter((p) => {
           const price = p.lowest_variant_price ?? p.price ?? 0;
           const mrp = p.lowest_variant_mrp ?? p.mrp ?? 0;
           return mrp > price && price > 0;
         });
-        // Sort by highest discount % first
         deals.sort((a, b) => {
           const discA = ((a.lowest_variant_mrp ?? a.mrp ?? 0) - (a.lowest_variant_price ?? a.price ?? 0)) / ((a.lowest_variant_mrp ?? a.mrp) || 1);
           const discB = ((b.lowest_variant_mrp ?? b.mrp ?? 0) - (b.lowest_variant_price ?? b.price ?? 0)) / ((b.lowest_variant_mrp ?? b.mrp) || 1);
