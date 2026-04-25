@@ -8,39 +8,38 @@ export default function SplashScreen({ children }) {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    const navEntry = performance.getEntriesByType("navigation")[0];
-    const navType = navEntry?.type;
+useEffect(() => {
+  const hasSeenSplash = sessionStorage.getItem("hasSeenSplash");
 
-    const isInternalNav =
-      document.referrer && document.referrer.includes(window.location.origin);
+  // ✅ If already seen in this session → skip
+  if (hasSeenSplash) {
+    setLoading(false);
+    return;
+  }
 
-    // ❌ Skip ONLY internal navigation
-    if (navType === "navigate" && isInternalNav) {
-      setLoading(false);
-      return;
+  // ✅ Mark as seen
+  sessionStorage.setItem("hasSeenSplash", "true");
+
+  // 🔄 Run your progress animation
+  let value = 0;
+
+  const interval = setInterval(() => {
+    value += Math.random() * 20;
+
+    if (value >= 100) {
+      value = 100;
+      clearInterval(interval);
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
 
-    // ✅ Show splash (first visit + reload)
-    let value = 0;
+    setProgress(value);
+  }, 200);
 
-    const interval = setInterval(() => {
-      value += Math.random() * 20;
-
-      if (value >= 100) {
-        value = 100;
-        clearInterval(interval);
-
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
-      }
-
-      setProgress(value);
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, []);
+  return () => clearInterval(interval);
+}, []);
 
   if (loading) {
     return (

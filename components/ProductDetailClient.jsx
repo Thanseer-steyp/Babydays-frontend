@@ -286,8 +286,21 @@ export default function ProductDetailClient({ product }) {
 
       return;
     }
-    if (wishlisted) await removeFromWishlist(product.slug);
-    else await addToWishlist(product.slug);
+
+    const productData = {
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      main_image: product.main_media,
+      average_rating: product.average_rating,
+      slug: product.slug,
+    };
+
+    if (wishlisted) {
+      await removeFromWishlist(productData);
+    } else {
+      await addToWishlist(productData);
+    }
   };
 
   const handleAddToCart = async () => {
@@ -687,7 +700,12 @@ export default function ProductDetailClient({ product }) {
           {/* Category */}
         </div>
       </div>
-      {showLogin && <AuthPopup onSuccess={handleLoginSuccess} />}
+      {showLogin && (
+        <AuthPopup
+          onSuccess={handleLoginSuccess}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </>
   );
 }

@@ -283,7 +283,7 @@ export default function Header() {
             )}
 
             {/* Cart */}
-            <Link href="/cart" className="flex flex-col items-center gap-0.5 text-gray-500 hover:text-teal-500 transition-colors relative">
+            {user && (<Link href="/cart" className="flex flex-col items-center gap-0.5 text-gray-500 hover:text-teal-500 transition-colors relative">
               <CartIcon />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-2 bg-teal-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
@@ -291,7 +291,7 @@ export default function Header() {
                 </span>
               )}
               <span className="hidden sm:block text-[10px] font-bold">Cart</span>
-            </Link>
+            </Link>)}
 
             {/* Auth */}
             {loading ? (
