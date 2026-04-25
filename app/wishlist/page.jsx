@@ -6,7 +6,7 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 
 export default function WishlistPage() {
-  const { wishlistItems } = useWishlist();
+  const { wishlistItems, loading } = useWishlist();
   const { user } = useAuth();
 
   if (!user) {
@@ -28,7 +28,13 @@ export default function WishlistPage() {
           <h1 className="text-2xl md:text-3xl font-black text-gray-900">My Wishlist</h1>
         </div>
 
-        {wishlistItems.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-64 bg-white rounded-2xl animate-pulse border border-gray-100" />
+            ))}
+          </div>
+        ) : wishlistItems.length === 0 ? (
           <div className="bg-white rounded-2xl border border-gray-100 flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-7xl"><img src="/icons/wishlist.png" alt="wishlist" className="w-32 h-32" /></div>
             <h3 className="text-xl font-black text-gray-700">Your wishlist is empty</h3>
@@ -48,6 +54,3 @@ export default function WishlistPage() {
     </main>
   );
 }
-
-
-

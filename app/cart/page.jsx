@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 
 const TrashIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
   </svg>
 );
 
@@ -30,18 +31,19 @@ export default function CartPage() {
   }
 
   const subtotal = cartItems.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
-  const deliveryCharge = cartItems.reduce((sum, item) => sum + (Number(item.delivery_charge ?? 0)), 0);
+  const deliveryCharge = cartItems.reduce((sum, item) => sum + Number(item.delivery_charge ?? 0), 0);
   const totalMRP = cartItems.reduce((sum, item) => sum + (Number(item.mrp ?? item.price) * item.quantity), 0);
   const savings = totalMRP - subtotal;
   const total = subtotal + deliveryCharge;
 
+  
+  const getImage = (item) => item.image1 || item.main_media || null;
+
   return (
     <main className="min-h-screen bg-gray-50" style={{ fontFamily: "'Nunito', sans-serif" }}>
       <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-8">
-        {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <h1 className="text-2xl md:text-3xl font-black text-gray-900">My Cart</h1>
-
         </div>
 
         {loading ? (
@@ -68,10 +70,12 @@ export default function CartPage() {
                   {/* Image */}
                   <Link href={`/product/${item.slug}`} className="flex-shrink-0">
                     <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-50">
-                      {item.main_media ? (
-                        <Image src={item.main_media} alt={item.title} fill className="object-cover" />
+                      {getImage(item) ? (
+                        <Image src={getImage(item)} alt={item.title} fill className="object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-200"><img src="/icons/notfound.jpg" alt="notfound" className="w-32 h-32" /></div>
+                        <div className="w-full h-full flex items-center justify-center text-gray-200">
+                          <img src="/icons/notfound.jpg" alt="notfound" className="w-24 h-24 object-cover" />
+                        </div>
                       )}
                     </div>
                   </Link>
@@ -81,7 +85,9 @@ export default function CartPage() {
                     <Link href={`/product/${item.slug}`}>
                       <p className="font-bold text-gray-800 text-sm hover:text-teal-600 transition-colors line-clamp-2">{item.title}</p>
                     </Link>
-                    {item.size && <p className="text-xs text-gray-400 mt-1">Size: <span className="font-semibold text-gray-600">{item.size}</span></p>}
+                    {item.size && (
+                      <p className="text-xs text-gray-400 mt-1">Size: <span className="font-semibold text-gray-600">{item.size}</span></p>
+                    )}
                     {item.stock <= 5 && item.stock > 0 && (
                       <p className="text-xs text-orange-500 font-bold mt-1">Only {item.stock} left!</p>
                     )}
@@ -95,18 +101,21 @@ export default function CartPage() {
                         )}
                       </div>
 
-                      {/* Qty controls + delete */}
                       <div className="flex items-center gap-3">
                         <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                           <button
-                            onClick={() => item.quantity > 1 ? updateQty(item.slug, item.quantity - 1) : removeFromCart(item.slug)}
+                            onClick={() =>
+                              item.quantity > 1
+                                ? updateQty(item.slug, item.size, item.quantity - 1, item.quantity)
+                                : removeFromCart(item.slug, item.size)
+                            }
                             className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 border-r border-gray-200 font-bold"
                           >
                             −
                           </button>
                           <span className="w-8 text-center text-sm font-bold text-gray-700">{item.quantity}</span>
                           <button
-                            onClick={() => updateQty(item.slug, item.quantity + 1)}
+                            onClick={() => updateQty(item.slug, item.size, item.quantity + 1, item.quantity)}
                             disabled={item.quantity >= (item.stock ?? 99)}
                             className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 border-l border-gray-200 font-bold disabled:opacity-30"
                           >
@@ -114,7 +123,7 @@ export default function CartPage() {
                           </button>
                         </div>
                         <button
-                          onClick={() => removeFromCart(item.slug)}
+                          onClick={() => removeFromCart(item.slug, item.size)}
                           className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors"
                         >
                           <TrashIcon />
@@ -126,9 +135,9 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* Order summary */}
+            {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24">
+              <div className="bg-white rounded-2xl border border-teal-400 p-6 sticky top-24">
                 <h3 className="text-lg font-black text-gray-900 mb-5">Order Summary</h3>
                 <div className="flex flex-col gap-3 text-sm">
                   <div className="flex justify-between text-gray-600">
@@ -147,7 +156,7 @@ export default function CartPage() {
                       {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge.toLocaleString("en-IN")}`}
                     </span>
                   </div>
-                  <div className="border-t border-gray-100 pt-3 flex justify-between font-black text-gray-900 text-base">
+                  <div className="border-t border-teal-100 pt-3 flex justify-between font-black text-gray-900 text-base">
                     <span>Total</span>
                     <span>₹{total.toLocaleString("en-IN")}</span>
                   </div>
@@ -171,6 +180,3 @@ export default function CartPage() {
     </main>
   );
 }
-
-
-

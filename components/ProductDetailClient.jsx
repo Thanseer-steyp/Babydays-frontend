@@ -2,15 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/components/context/CartContext";
 import { useWishlist } from "@/components/context/WishlistContext";
 import { useAuth } from "@/components/context/AuthContext";
-import AuthPopup from "@/components/screens/auth/AuthPopup";
-import axiosPublic from "./config/AxiosPublic";
 import axiosPrivate from "./config/AxiosPrivate";
 import { useRouter } from "next/navigation";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers 
 const isVideo = (url) => /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url ?? "");
 
-// ── Icons ─────────────────────────────────────────────────────────────────────
+// ── Icons 
 const ChevronLeft = () => (
   <svg
     width="20"
@@ -122,7 +120,7 @@ const UnmuteIcon = () => (
   </svg>
 );
 
-// ── Video Player with mute toggle ─────────────────────────────────────────────
+
 const VideoPlayer = ({ src, isMuted, onToggleMute }) => {
   const videoRef = useRef(null);
 
@@ -143,7 +141,6 @@ const VideoPlayer = ({ src, isMuted, onToggleMute }) => {
         loop
         playsInline
       />
-      {/* Mute / Unmute button — bottom-right corner */}
       <button
         onClick={onToggleMute}
         className="absolute bottom-3 right-3 z-20 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-all"
@@ -155,7 +152,7 @@ const VideoPlayer = ({ src, isMuted, onToggleMute }) => {
   );
 };
 
-// ── Thumbnail ─────────────────────────────────────────────────────────────────
+// ── Thumbnail 
 const Thumbnail = ({ src, alt, active, onClick }) => (
   <button
     onClick={onClick}
@@ -173,43 +170,23 @@ const Thumbnail = ({ src, alt, active, onClick }) => (
   </button>
 );
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ── Main Component 
 export default function ProductDetailClient({ product }) {
   const { addToCart } = useCart();
-  const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
+  const { wishlistSlugs, toggleWishlist } = useWishlist();
   const { user } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
-  const loginRef = useRef(null);
   const router = useRouter();
 
   const [activeImg, setActiveImg] = useState(0);
-  const [isMuted, setIsMuted] = useState(true); // videos start muted (browser autoplay policy)
-  const { login } = useAuth();
-  const [pendingAction, setPendingAction] = useState(null);
-
-  const handleSuccess = async (credentialResponse) => {
-    const token = credentialResponse.credential;
-
-    try {
-      await axiosPublic.post(
-        "http://localhost:8000/api/v1/register/google-login/",
-        { token },
-        { withCredentials: true },
-      );
-
-      login(); // 🔥 update user from backend
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  // Group variants by size
+  const [isMuted, setIsMuted] = useState(true); 
+  
   const groupedVariants = Object.values(
     product.variants.reduce((acc, v) => {
       if (!acc[v.size]) {
         acc[v.size] = {
           size: v.size,
           items: [],
-          image: v.image, // take first image for that size
+          image: v.image, 
         };
       }
       acc[v.size].items.push(v);
@@ -239,16 +216,14 @@ export default function ProductDetailClient({ product }) {
   const [cartMsg, setCartMsg] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
 
-  // ── Build media list (images + videos) ──────────────────────────────────────
-  // ── Build media list (clean & no duplicates) ──
   let mediaList = [];
 
-  // 1. ONLY selected variant image
+  
   if (selectedItem?.image) {
     mediaList.push(selectedItem.image);
   }
 
-  // 2. Optional: add product media (excluding duplicate)
+  
   const productMedia = product.media?.map((m) => m.media).filter(Boolean) ?? [];
 
   const filteredProductMedia = productMedia.filter(
@@ -257,7 +232,7 @@ export default function ProductDetailClient({ product }) {
 
   mediaList.push(...filteredProductMedia);
 
-  // 3. fallback
+  
   if (mediaList.length === 0 && product.main_media) {
     mediaList.push(product.main_media);
   }
@@ -266,24 +241,20 @@ export default function ProductDetailClient({ product }) {
     setActiveImg(0);
   }, [selectedItem]);
 
-  // ── Pricing ──────────────────────────────────────────────────────────────────
+  
   const price = selectedItem?.price ?? product.price ?? 0;
   const mrp = selectedItem?.mrp ?? product.mrp ?? price;
 
   const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : null;
   const isAvailable =
     product.is_available && (selectedItem ? selectedItem.is_available : true);
-  const wishlisted = isWishlisted(product.id);
+  const wishlisted = wishlistSlugs.has(product.slug);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────────
+
+  
   const handleWishlist = async () => {
     if (!user) {
-      setShowLogin(true);
-
-      setTimeout(() => {
-        document.getElementById("googleLoginTrigger")?.click();
-      }, 100);
-
+      router.push("/auth");
       return;
     }
 
@@ -305,12 +276,7 @@ export default function ProductDetailClient({ product }) {
 
   const handleAddToCart = async () => {
     if (!user) {
-      setShowLogin(true);
-
-      setTimeout(() => {
-        document.getElementById("googleLoginTrigger")?.click();
-      }, 100);
-
+      router.push("/auth");
       return;
     }
     if (product.variants?.length > 0 && !selectedItem) {
@@ -318,8 +284,8 @@ export default function ProductDetailClient({ product }) {
       return;
     }
 
-    const variantId = selectedItem?.id;
-    const result = await addToCart(product.slug, variantId, qty);
+    setAddingToCart(true);
+    const result = await addToCart(product.slug, selectedItem?.size);
     setCartMsg(
       result.success
         ? { type: "success", text: "Added to cart!" }
@@ -331,8 +297,7 @@ export default function ProductDetailClient({ product }) {
 
   const handleBuyNow = async () => {
     if (!user) {
-      setPendingAction("BUY_NOW"); // ✅ string
-      setShowLogin(true);
+      router.push("/auth");
       return;
     }
 
@@ -341,10 +306,10 @@ export default function ProductDetailClient({ product }) {
 
   const proceedToCheckout = async () => {
     try {
-      // 1️⃣ Reset session
+      
       await axiosPrivate.post("user/checkout/session/create/");
 
-      // 2️⃣ Add item
+      
       await axiosPrivate.post("user/checkout/session/add/", {
         variant_id: selectedItem.id,
         qty: qty,
@@ -353,16 +318,6 @@ export default function ProductDetailClient({ product }) {
     } catch (err) {
       console.error(err);
     }
-  };
-  useEffect(() => {
-    if (user && pendingAction === "BUY_NOW") {
-      proceedToCheckout();
-      setPendingAction(null);
-    }
-  }, [user]);
-
-  const handleLoginSuccess = () => {
-    setShowLogin(false);
   };
 
   const handleShare = () => {
@@ -381,7 +336,7 @@ export default function ProductDetailClient({ product }) {
 
   const currentMedia = mediaList[activeImg];
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  // ── Render 
   return (
     <>
       <style>{`
@@ -559,8 +514,7 @@ export default function ProductDetailClient({ product }) {
             </a>
           </p>
 
-          {/* Variants (prints) */}
-          {/* Variant Images (based on selected size) */}
+
           {selectedGroup?.items?.length > 0 && (
             <div className="flex flex-col gap-2">
               <p className="text-sm font-bold text-gray-700">Select Design</p>
@@ -697,7 +651,6 @@ export default function ProductDetailClient({ product }) {
             </div>
           )}
 
-          {/* Category */}
         </div>
       </div>
       {showLogin && (

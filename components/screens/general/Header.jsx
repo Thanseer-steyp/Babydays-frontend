@@ -7,7 +7,7 @@ import { useAuth } from "@/components/context/AuthContext";
 import { useCart } from "@/components/context/CartContext";
 import axiosPublic from "@/components/config/AxiosPublic";
 
-// ── Icons ────────────────────────────────────────────────────────────────────
+// ── Icons 
 const SearchIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
@@ -68,7 +68,7 @@ const OrdersIcon = () => (
   </svg>
 );
 
-// ── Hook: outside click ───────────────────────────────────────────────────────
+// ── Hook: outside click 
 function useOutsideClick(ref, cb) {
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) cb(); };
@@ -77,7 +77,7 @@ function useOutsideClick(ref, cb) {
   }, [ref, cb]);
 }
 
-// ── UserMenu ──────────────────────────────────────────────────────────────────
+// ── UserMenu 
 function UserMenu({ user, logout }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -93,9 +93,7 @@ function UserMenu({ user, logout }) {
         <div className="w-7 h-7 rounded-full bg-teal-100 flex items-center justify-center text-xs font-bold text-teal-700">
           {initial}
         </div>
-        <span className="text-[10px] font-bold tracking-wide max-w-[60px] truncate">
-          {user.username ?? user.email?.split("@")[0]}
-        </span>
+        
       </button>
 
       {open && (
@@ -124,7 +122,7 @@ function UserMenu({ user, logout }) {
   );
 }
 
-// ── Main Header ───────────────────────────────────────────────────────────────
+// ── Main Header 
 export default function Header() {
   const { user, logout, loading } = useAuth();
   const { cartCount } = useCart();
@@ -160,7 +158,7 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [searchValue]);
 
-  // Real categories from backend
+  
   const [apiCategories, setApiCategories] = useState([]);
   const browseRef = useRef(null);
   useOutsideClick(browseRef, () => setBrowseOpen(false));
@@ -274,7 +272,7 @@ export default function Header() {
 
           {/* Right icons */}
           <div className="flex items-center gap-4 ml-auto">
-            {/* Wishlist — only logged in */}
+            
             {user && (
               <Link href="/wishlist" className="hidden sm:flex flex-col items-center gap-0.5 text-gray-500 hover:text-teal-500 transition-colors">
                 <HeartIcon />
@@ -320,7 +318,7 @@ export default function Header() {
 
         {/* ── Desktop nav ── */}
         <div className="hidden sm:flex max-w-[1400px] mx-auto px-4 sm:px-6 py-2 items-center gap-4">
-          {/* Browse Categories dropdown */}
+          
           <div className="relative flex-shrink-0" ref={browseRef}>
             <button
               onClick={() => setBrowseOpen((o) => !o)}

@@ -1,4 +1,3 @@
-// PATH: components/ProductCard.jsx
 "use client";
 
 import Image from "next/image";
@@ -23,23 +22,38 @@ const HeartIcon = ({ filled }) => (
 );
 
 export default function ProductCard({ product }) {
-  const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
+  const { wishlistSlugs, toggleWishlist, loading } = useWishlist();
   const { user } = useAuth();
   const router = useRouter();
 
-  // Support both API shape and legacy shape
-  const title = product.title;
-  const slug = product.slug;
-  const mainImage = product.main_media ?? product.images?.[0];
-  // const price = product.lowest_variant_price ?? product.price;
-  // const mrp = product.lowest_variant_mrp ?? product.mrp;
-  const isAvailable =
-    product.is_available !== undefined ? product.is_available : true; // fallback
-  const id = product.id;
+  const id = product?.id;
+  const title = product?.title ?? product?.name ?? "";
+  const slug = product?.slug ?? "";
+  const mainImage =
+    product?.main_media ??
+    product?.image1 ??        
+    product?.images?.[0] ??
+    null;
+  const price =
+    product?.lowest_variant_price ??
+    product?.price ??         
+    product?.salePrice ??
+    0;
+  const mrp =
+    product?.lowest_variant_mrp ??
+    product?.mrp ??
+    product?.price ??
+    0;
+  const isAvailable = product?.is_available ?? product?.inStock ?? true;
 
+  
+  const discount =
+    mrp && price && mrp > price
+      ? Math.round(((mrp - price) / mrp) * 100)
+      : null;
 
-
-  const wishlisted = isWishlisted(id);
+  
+  const wishlisted = slug ? wishlistSlugs.has(slug) : false;
 
   const handleWishlist = async (e) => {
     e.preventDefault();
@@ -72,16 +86,17 @@ export default function ProductCard({ product }) {
       className="group relative flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200"
       aria-label={`View ${title}`}
     >
-      {/* Wishlist button */}
+      {/* Wishlist Button */}
       <button
         onClick={handleWishlist}
-        className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+        disabled={loading}
+        className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow-sm hover:scale-110 transition-transform disabled:opacity-50"
         aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
         <HeartIcon filled={wishlisted} />
       </button>
 
-      {/* Out of stock badge */}
+      {/*  Out of stock */}
       {!isAvailable && (
         <div className="absolute top-3 left-0 z-10 bg-orange-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-r-full shadow-sm">
           Out of stock

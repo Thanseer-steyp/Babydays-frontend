@@ -1330,7 +1330,7 @@ function CodConfirmModal({ open, onClose, onConfirm, total }) {
             <img
               src="/icons/shoppingbag.png"
               alt="shoppingbag"
-              className="w-32 h-32"
+              className="w-32 h-18"
             />
           </div>
           <h2
