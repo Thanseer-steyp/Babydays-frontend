@@ -35,6 +35,8 @@ export default function CategoryPage({ params }) {
     fetchData();
   }, [slug]);
 
+  const displayImage = category?.banner || category?.image;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'Nunito', sans-serif" }}>
@@ -52,8 +54,9 @@ export default function CategoryPage({ params }) {
     <main className="min-h-screen bg-gray-50" style={{ fontFamily: "'Nunito', sans-serif" }}>
       {/* Hero banner */}
       <div className="relative w-full" style={{ height: "280px" }}>
-        {category?.image ? (
-          <img src={category.image} alt={category.name} className="absolute inset-0 w-full h-full object-cover object-center" />
+        
+        {displayImage ? (
+          <img src={displayImage} alt={category.name} className="absolute inset-0 w-full h-full object-cover object-center" />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-teal-400 to-teal-700" />
         )}

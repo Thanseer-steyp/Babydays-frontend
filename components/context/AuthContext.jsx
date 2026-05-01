@@ -2,12 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import axiosPrivate from "@/components/config/AxiosPrivate";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router=useRouter();
 
   
   const fetchUser = async () => {
@@ -45,6 +47,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     setUser(null);
+    router.replace("/");
   };
 
   return (

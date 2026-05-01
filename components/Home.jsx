@@ -6,24 +6,50 @@ import ProductCard from "@/components/ProductCard";
 import axiosPublic from "@/components/config/AxiosPublic";
 
 const ChevronRight = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="9 18 15 12 9 6" />
   </svg>
 );
 
+
+
+
 function CategorySection({ category, products }) {
   if (!products || products.length === 0) return null;
+  const displayCategory = category.banner || category.image;
 
   return (
     <section className="flex flex-col gap-6">
       {/* Banner */}
-      <div className="relative w-full rounded-2xl overflow-hidden shadow-md" style={{ height: "200px" }}>
+      <div
+        className="relative w-full rounded-2xl overflow-hidden shadow-md"
+        style={{ height: "200px" }}
+      >
         {category.image ? (
-          <img src={category.image} alt={category.name} className="absolute inset-0 w-full h-full object-cover object-center" />
+          <img
+            src={displayCategory}
+            alt={category.name}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-teal-600" />
         )}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)" }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)",
+          }}
+        />
         <div className="absolute inset-0 flex flex-col justify-center pl-8 md:pl-12">
           <span className="text-xs font-bold tracking-widest uppercase mb-2 px-2 py-0.5 rounded w-fit text-white bg-teal-500/80">
             Collection
@@ -78,12 +104,14 @@ export default function HomePage() {
         await Promise.all(
           cats.map(async (cat) => {
             try {
-              const prodRes = await axiosPublic.get(`public/products/?category=${cat.slug}`);
+              const prodRes = await axiosPublic.get(
+                `public/products/?category=${cat.slug}`,
+              );
               productMap[cat.slug] = prodRes.data.slice(0, 10);
             } catch {
               productMap[cat.slug] = [];
             }
-          })
+          }),
         );
         setProductsByCategory(productMap);
       } catch (err) {
@@ -103,7 +131,10 @@ export default function HomePage() {
             <div className="w-full h-48 rounded-2xl bg-gray-100 animate-pulse" />
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {Array.from({ length: 5 }).map((_, j) => (
-                <div key={j} className="aspect-square rounded-xl bg-gray-100 animate-pulse" />
+                <div
+                  key={j}
+                  className="aspect-square rounded-xl bg-gray-100 animate-pulse"
+                />
               ))}
             </div>
           </div>
@@ -113,7 +144,10 @@ export default function HomePage() {
   }
 
   return (
-    <main className="w-full bg-gray-50 min-h-screen" style={{ fontFamily: "'Nunito', sans-serif" }}>
+    <main
+      className="w-full bg-gray-50 min-h-screen"
+      style={{ fontFamily: "'Nunito', sans-serif" }}
+    >
       <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-16">
         {categories.map((cat) => (
           <CategorySection
@@ -124,14 +158,17 @@ export default function HomePage() {
         ))}
         {categories.length === 0 && (
           <div className="text-center py-20 text-gray-400">
-            <img src="/icons/shoppingbag.png" alt="shoppingbag" className="w-32 h-32 mx-auto" />
-            <p className="font-bold text-lg">No products yet. Check back soon!</p>
+            <img
+              src="/icons/shoppingbag.png"
+              alt="shoppingbag"
+              className="w-32 h-32 mx-auto"
+            />
+            <p className="font-bold text-lg">
+              No products yet. Check back soon!
+            </p>
           </div>
         )}
       </div>
     </main>
   );
 }
-
-
-

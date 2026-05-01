@@ -135,7 +135,7 @@ export default function CheckoutPage() {
   const [checkoutSessionId, setCheckoutSessionId] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState([]);
-  const { clearCart } = useCart();
+  const { fetchCart } = useCart();
   const router = useRouter();
 
   const [address, setAddress] = useState({
@@ -205,6 +205,7 @@ export default function CheckoutPage() {
       if (res.data?.success) {
         setShowCodModal(false);
         router.push("/orders");
+        await fetchCart();
       } else {
         alert(res.data?.detail || "Order failed");
       }
@@ -281,6 +282,7 @@ export default function CheckoutPage() {
             address,
           });
           router.push("/orders");
+          await fetchCart();
         },
       };
       new window.Razorpay(options).open();
@@ -319,7 +321,7 @@ transition-all duration-200
 hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(13,148,136,0.36)] 
 active:translate-y-0"
             onClick={() => {
-              router.push("/product");
+              router.push("/products");
             }}
           >
             Browse Products

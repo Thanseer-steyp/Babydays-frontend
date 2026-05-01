@@ -22,38 +22,27 @@ const HeartIcon = ({ filled }) => (
 );
 
 export default function ProductCard({ product }) {
-  const { wishlistSlugs, toggleWishlist, loading } = useWishlist();
+  const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
   const { user } = useAuth();
   const router = useRouter();
 
   const id = product?.id;
-  const title = product?.title ?? product?.name ?? "";
-  const slug = product?.slug ?? "";
+  const title = product?.title;
+  const slug = product?.slug;
   const mainImage =
-    product?.main_media ??
-    product?.image1 ??        
-    product?.images?.[0] ??
-    null;
+    product?.main_media ?? product?.image1 ?? product?.images?.[0] ?? null;
   const price =
-    product?.lowest_variant_price ??
-    product?.price ??         
-    product?.salePrice ??
-    0;
+    product?.lowest_variant_price ?? product?.price ?? product?.salePrice ?? 0;
   const mrp =
-    product?.lowest_variant_mrp ??
-    product?.mrp ??
-    product?.price ??
-    0;
+    product?.lowest_variant_mrp ?? product?.mrp ?? product?.price ?? 0;
   const isAvailable = product?.is_available ?? product?.inStock ?? true;
 
-  
   const discount =
     mrp && price && mrp > price
       ? Math.round(((mrp - price) / mrp) * 100)
       : null;
 
-  
-  const wishlisted = slug ? wishlistSlugs.has(slug) : false;
+  const wishlisted = isWishlisted(id);
 
   const handleWishlist = async (e) => {
     e.preventDefault();
@@ -67,7 +56,7 @@ export default function ProductCard({ product }) {
     const productData = {
       id,
       title,
-      // price,
+      price,
       main_media: mainImage,
       average_rating: product.average_rating ?? 0,
       slug,
@@ -89,7 +78,7 @@ export default function ProductCard({ product }) {
       {/* Wishlist Button */}
       <button
         onClick={handleWishlist}
-        disabled={loading}
+        // disabled={loading}
         className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow-sm hover:scale-110 transition-transform disabled:opacity-50"
         aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
@@ -103,12 +92,12 @@ export default function ProductCard({ product }) {
         </div>
       )}
 
-      {/* Discount badge
+      {/* Discount badge */}
       {discount && isAvailable && (
         <div className="absolute top-3 left-0 z-10 bg-teal-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-r-full shadow-sm">
           {discount}% OFF
         </div>
-      )} */}
+      )}
 
       {/* Image */}
       <div
@@ -146,23 +135,15 @@ export default function ProductCard({ product }) {
         <p className="text-[13px] text-gray-700 font-semibold leading-snug line-clamp-2 group-hover:text-teal-700 transition-colors">
           {title}
         </p>
-        {/* <div className="flex items-center gap-2 mt-auto flex-wrap">
+        <div className="flex items-center gap-2 mt-auto flex-wrap">
           <span className="text-base font-black text-gray-900">
             ₹{Number(price).toLocaleString("en-IN")}
           </span>
-          {mrp > price && (
-            <>
-              <span className="text-sm text-gray-400 line-through">
-                ₹{Number(mrp).toLocaleString("en-IN")}
-              </span>
-              {discount && (
-                <span className="text-xs font-bold text-orange-500">
-                  {discount}% off
-                </span>
-              )}
-            </>
-          )}
-        </div> */}
+
+          <span className="text-sm text-gray-400 line-through">
+            ₹{Number(mrp).toLocaleString("en-IN")}
+          </span>
+        </div>
       </div>
     </Link>
   );

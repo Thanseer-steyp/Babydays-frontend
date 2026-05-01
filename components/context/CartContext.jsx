@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import axiosPrivate from "@/components/config/AxiosPrivate";
 import { useAuth } from "./AuthContext";
 
@@ -11,6 +17,8 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(false);
+
+
 
   const fetchCart = useCallback(async () => {
     if (!user) {
@@ -34,9 +42,9 @@ export const CartProvider = ({ children }) => {
     fetchCart();
   }, [fetchCart]);
 
-  const addToCart = async (slug, size) => {
+  const addToCart = async (slug, variant_id) => {
     try {
-      await axiosPrivate.post(`user/cart/add/${slug}/`, { size });
+      await axiosPrivate.post(`user/cart/add/${slug}/`, { variant_id });
       await fetchCart();
       return { success: true };
     } catch (err) {
@@ -44,21 +52,34 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const removeFromCart = async (slug, size) => {
+  const removeFromCart = async (slug, variant_id) => {
     try {
-      await axiosPrivate.delete(`user/cart/remove/${slug}/`, { data: { size } });
+      await axiosPrivate.delete(`user/cart/remove/${slug}/`, {
+        data: { variant_id },
+      });
       await fetchCart();
     } catch (err) {
       console.error("Remove from cart error:", err);
     }
   };
 
-  
-  const updateQty = async (slug, size, newQty, currentQty) => {
+  const updateQty = async (slug, variant_id, newQty, currentQty) => {
     const action = newQty > currentQty ? "increase" : "decrease";
+
     try {
-      await axiosPrivate.patch(`user/cart/update/${slug}/`, { action, size });
-      await fetchCart();
+      await axiosPrivate.patch(`user/cart/update/${slug}/`, {
+        action,
+        variant_id,
+      });
+
+      // ✅ update UI instantly (NO refetch)
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.variant_id === variant_id ? { ...item, quantity: newQty } : item,
+        ),
+      );
+
+      setCartCount((prev) => (action === "increase" ? prev + 1 : prev - 1));
     } catch (err) {
       console.error("Update qty error:", err);
     }
@@ -66,7 +87,15 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, cartCount, loading, fetchCart, addToCart, removeFromCart, updateQty }}
+      value={{
+        cartItems,
+        cartCount,
+        loading,
+        fetchCart,
+        addToCart,
+        removeFromCart,
+        updateQty,
+      }}
     >
       {children}
     </CartContext.Provider>
